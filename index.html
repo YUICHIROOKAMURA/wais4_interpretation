@@ -1,0 +1,3422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAIS-IV を読み、支援につなぐ — 知能理論から制度・倫理まで</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F4EFE6;
+    --paper-deep: #ECE4D3;
+    --paper-warm: #EFE6D2;
+    --ink: #1A2333;
+    --ink-soft: #2C3A4F;
+    --ink-mute: #5A6478;
+    --terracotta: #B95C3F;
+    --terracotta-deep: #8B3F25;
+    --terracotta-soft: #E4B19A;
+    --teal: #2D5550;
+    --teal-deep: #1A3A36;
+    --teal-soft: #B8CDC9;
+    --ochre: #B89968;
+    --ochre-soft: #E0CBA0;
+    --line: #C8BCA6;
+    --line-soft: #DDD3BD;
+    --shadow: rgba(26,35,51,0.08);
+    --shadow-strong: rgba(26,35,51,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.85;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  /* ===== Subtle paper texture ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184,153,104,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(185,92,63,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  body > * { position: relative; z-index: 2; }
+
+  /* ===== Progress bar ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(26,35,51,0.06);
+    z-index: 100;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--terracotta), var(--ochre));
+    transition: width 0.1s ease-out;
+  }
+
+  /* ===== Top nav ===== */
+  .top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(244, 239, 230, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line-soft);
+    z-index: 90;
+    padding: 14px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+  .top-nav .title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .top-nav .meta {
+    color: var(--ink-mute);
+    font-feature-settings: "tnum";
+  }
+  @media (max-width: 720px) {
+    .top-nav { padding: 10px 16px; font-size: 11px; }
+    .top-nav .meta { display: none; }
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    min-height: 100vh;
+    padding: 80px 32px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--terracotta);
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: clamp(2.4rem, 6vw, 4.6rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+  .hero h1 .accent {
+    color: var(--terracotta);
+    font-style: italic;
+    font-weight: 700;
+  }
+  .hero .subtitle {
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    color: var(--ink-soft);
+    max-width: 720px;
+    line-height: 1.9;
+    margin-bottom: 48px;
+  }
+  .hero .for-whom {
+    display: inline-block;
+    border-left: 3px solid var(--terracotta);
+    padding: 8px 20px;
+    font-size: 14px;
+    color: var(--ink-mute);
+    background: rgba(255,255,255,0.4);
+    margin-bottom: 56px;
+  }
+  .hero .scroll-cue {
+    position: absolute;
+    bottom: 40px;
+    left: 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-mute);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero .scroll-cue::after {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background: var(--ink-mute);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleX(0.4); transform-origin: left; }
+    50% { transform: scaleX(1); transform-origin: left; }
+  }
+
+  /* ===== Sections ===== */
+  section.chapter {
+    padding: 110px 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  @media (max-width: 720px) {
+    section.chapter {
+      padding: 70px 20px;
+    }
+    .hero {
+      padding: 60px 20px;
+    }
+    .critical-section {
+      padding: 60px 20px;
+      margin: 60px -20px;
+    }
+    .critical-section .chapter {
+      padding: 0;
+    }
+    .refs {
+      padding: 40px 20px;
+    }
+  }
+  .chapter-head {
+    display: flex;
+    align-items: baseline;
+    gap: 28px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+  }
+  .chapter-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 1;
+    color: var(--terracotta);
+    font-weight: 500;
+  }
+  .chapter-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    line-height: 1.4;
+    color: var(--ink);
+    flex: 1 1 400px;
+  }
+  .chapter-kicker {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 8px;
+  }
+  .lead {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 2.0;
+    color: var(--ink-soft);
+    max-width: 800px;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  p {
+    max-width: 760px;
+    margin-bottom: 1.4em;
+    color: var(--ink-soft);
+  }
+  p strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .pull-quote {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    font-weight: 500;
+    line-height: 1.7;
+    color: var(--ink);
+    padding: 40px 0 40px 28px;
+    border-left: 4px solid var(--terracotta);
+    margin: 48px 0;
+    max-width: 800px;
+  }
+  .pull-quote .attrib {
+    display: block;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-mute);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  /* ===== Misconception cards (intro) ===== */
+  .misconception-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 48px 0;
+  }
+  .misconception-card {
+    background: var(--paper-deep);
+    padding: 28px;
+    border-radius: 4px;
+    border: 1px solid var(--line-soft);
+    position: relative;
+  }
+  .misconception-card .tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .misconception-card .heard {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 16px;
+    quotes: "「" "」";
+  }
+  .misconception-card .heard::before { content: open-quote; color: var(--terracotta); font-size: 1.3em; }
+  .misconception-card .heard::after { content: close-quote; color: var(--terracotta); font-size: 1.3em; }
+  .misconception-card .reality {
+    font-size: 14px;
+    color: var(--ink-mute);
+    line-height: 1.8;
+    border-top: 1px dashed var(--line);
+    padding-top: 14px;
+  }
+  .misconception-card .reality::before {
+    content: 'しかし実際は ';
+    color: var(--terracotta);
+    font-weight: 500;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: 0.03em;
+  }
+
+  /* ===== Structure tree ===== */
+  .tree-wrap {
+    background: var(--paper-warm);
+    padding: 56px 32px;
+    border-radius: 4px;
+    margin: 40px 0;
+  }
+  .tree {
+    width: 100%;
+    text-align: center;
+  }
+  .tree .node {
+    display: inline-block;
+    padding: 14px 22px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0 4px 4px;
+    text-align: left;
+  }
+  .tree .node.fsiq {
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 16px;
+    padding: 18px 32px;
+  }
+  .tree .node.index {
+    background: var(--terracotta);
+    color: var(--paper);
+    border-color: var(--terracotta);
+    min-width: 140px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+  }
+  .tree .node.index .en {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+  .tree .node.sub {
+    background: var(--paper);
+    font-size: 12px;
+    padding: 8px 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    display: block;
+    text-align: center;
+    width: 100%;
+    max-width: 140px;
+    margin: 0 auto;
+  }
+  .tree .node.sub.supp { background: transparent; border-style: dashed; color: var(--ink-mute); }
+  .tree .level-line {
+    width: 1px;
+    height: 32px;
+    background: var(--ink);
+    margin: 0 auto;
+  }
+  .tree .branch-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .tree .branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .tree .horizontal-line {
+    height: 1px;
+    background: var(--ink);
+    margin: 0 auto;
+  }
+  .tree .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--ink-mute);
+    flex-wrap: wrap;
+  }
+  .tree .legend span { display: flex; align-items: center; gap: 8px; }
+  .tree .legend .sw {
+    display: inline-block; width: 16px; height: 12px; border: 1.5px solid var(--ink);
+  }
+  .tree .legend .sw.core { background: var(--paper); }
+  .tree .legend .sw.supp { background: transparent; border-style: dashed; }
+
+  /* Mobile: 2x2 layout for 4 indices */
+  @media (max-width: 720px) {
+    .tree-wrap {
+      padding: 32px 16px;
+    }
+    .tree .branch-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 12px;
+    }
+    .tree .node {
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+    .tree .node.fsiq {
+      font-size: 14px;
+      padding: 14px 20px;
+    }
+    .tree .node.index {
+      min-width: 0;
+      width: 100%;
+      padding: 12px 8px;
+      font-size: 13px;
+    }
+    .tree .node.sub {
+      font-size: 11px;
+      padding: 6px 8px;
+      max-width: 100%;
+    }
+    .tree .level-line {
+      height: 20px;
+    }
+  }
+  @media (max-width: 420px) {
+    .tree .node.index { font-size: 12px; }
+    .tree .node.index .en { font-size: 10px; }
+    .tree .node.sub { font-size: 10px; }
+  }
+
+  /* ===== Index detail cards ===== */
+  .index-detail {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 0;
+    margin: 64px 0;
+    background: var(--paper-deep);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+  }
+  .index-detail .head-col {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .index-detail.terr .head-col { background: var(--terracotta); }
+  .index-detail.teal .head-col { background: var(--teal); }
+  .index-detail.ochre .head-col { background: var(--ochre); color: var(--ink); }
+  .index-detail.ink .head-col { background: var(--ink-soft); }
+  .index-detail .head-col .index-code {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .index-detail .head-col .index-name {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .index-detail .head-col .plain-name {
+    font-size: 14px;
+    line-height: 1.8;
+    opacity: 0.9;
+    border-top: 1px solid currentColor;
+    padding-top: 16px;
+    margin-top: auto;
+  }
+  .index-detail .head-col .plain-name::before {
+    content: 'つまり何を測っているか';
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+  .index-detail .body-col {
+    padding: 40px 32px;
+  }
+  .index-detail h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 8px;
+    margin-top: 24px;
+  }
+  .index-detail h4:first-child { margin-top: 0; }
+  .index-detail p {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  .index-detail .subtests {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .index-detail .subtests span {
+    background: var(--paper);
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+  .index-detail .subtests span.supp {
+    border-style: dashed;
+    color: var(--ink-mute);
+  }
+  .index-detail .work-signal {
+    background: var(--paper);
+    padding: 16px 20px;
+    margin-top: 12px;
+    border-left: 3px solid var(--terracotta);
+    font-size: 14px;
+    line-height: 1.85;
+  }
+  @media (max-width: 760px) {
+    .index-detail { grid-template-columns: 1fr; }
+  }
+
+  /* ===== Bell curve / classification ===== */
+  .curve-wrap {
+    background: var(--paper-warm);
+    padding: 56px 24px 40px;
+    margin: 48px 0;
+    border-radius: 4px;
+  }
+  .curve-wrap svg {
+    width: 100%;
+    height: auto;
+    max-width: 900px;
+    display: block;
+    margin: 0 auto;
+  }
+  .curve-caption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin-top: 24px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.85;
+  }
+
+  /* ===== Score classification table ===== */
+  .class-table {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    margin: 32px 0;
+    font-size: 14px;
+  }
+  .class-table th, .class-table td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .class-table th {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    border-bottom: 1.5px solid var(--ink);
+    font-weight: 500;
+  }
+  .class-table td:first-child {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    font-feature-settings: "tnum";
+    color: var(--ink);
+  }
+  .class-table td.pct {
+    color: var(--ink-mute);
+    font-feature-settings: "tnum";
+  }
+
+  /* ===== Confidence interval visual ===== */
+  .ci-demo {
+    background: var(--paper-deep);
+    padding: 40px 32px;
+    margin: 40px 0;
+    border-radius: 4px;
+  }
+  .ci-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+  .ci-label {
+    min-width: 180px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .ci-label strong {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .ci-bar-wrap {
+    flex: 1;
+    min-width: 280px;
+    position: relative;
+    height: 36px;
+  }
+  .ci-axis {
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: var(--line);
+  }
+  .ci-bar {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 14px;
+    background: var(--terracotta-soft);
+    border: 1.5px solid var(--terracotta);
+  }
+  .ci-bar .point {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: var(--terracotta-deep);
+    border-radius: 50%;
+  }
+  .ci-bar .range-label {
+    position: absolute;
+    top: -22px;
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-feature-settings: "tnum";
+    white-space: nowrap;
+  }
+  .ci-bar .range-label.left { left: -4px; }
+  .ci-bar .range-label.right { right: -4px; }
+  .ci-bar .range-label.center {
+    left: 50%; transform: translateX(-50%);
+    bottom: -22px; top: auto;
+    color: var(--terracotta-deep);
+    font-weight: 600;
+  }
+  .ci-scale {
+    position: absolute;
+    bottom: -34px; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--ink-mute);
+  }
+
+  /* ===== Discrepancy / comparison ===== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 48px 0;
+  }
+  .compare-cell {
+    padding: 32px;
+    border-radius: 4px;
+  }
+  .compare-cell.stat {
+    background: var(--paper-deep);
+    border-left: 4px solid var(--ink);
+  }
+  .compare-cell.freq {
+    background: var(--paper-deep);
+    border-left: 4px solid var(--terracotta);
+  }
+  .compare-cell .head {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ink-mute);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .compare-cell h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  .compare-cell p {
+    font-size: 14px;
+    line-height: 1.85;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 720px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  /* ===== Critical section (limitations) ===== */
+  .critical-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 32px;
+    margin: 80px -32px;
+    position: relative;
+  }
+  .critical-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--terracotta), var(--ochre));
+  }
+  .critical-section .chapter-head { border-bottom-color: rgba(244,239,230,0.2); }
+  .critical-section .chapter-title { color: var(--paper); }
+  .critical-section .chapter-num { color: var(--terracotta-soft); }
+  .critical-section .lead { color: rgba(244,239,230,0.85); }
+  .critical-section p { color: rgba(244,239,230,0.8); }
+  .critical-section p strong { color: var(--paper); }
+  .critical-section h4 { color: var(--terracotta-soft); }
+  .critical-section .pull-quote {
+    color: var(--paper);
+    border-left-color: var(--terracotta);
+  }
+  .critical-section .pull-quote .attrib { color: rgba(244,239,230,0.6); }
+
+  .limitation-block {
+    margin: 56px 0;
+    padding: 32px 0;
+    border-top: 1px solid rgba(244,239,230,0.15);
+  }
+  .limitation-block .lim-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--terracotta-soft);
+    margin-bottom: 4px;
+  }
+  .limitation-block h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: var(--paper);
+    margin-bottom: 20px;
+  }
+  .limitation-block .evidence-note {
+    background: rgba(244,239,230,0.06);
+    border-left: 3px solid var(--ochre);
+    padding: 16px 20px;
+    margin-top: 20px;
+    font-size: 13px;
+    line-height: 1.85;
+    color: rgba(244,239,230,0.85);
+  }
+  .limitation-block .evidence-note::before {
+    content: 'エビデンス';
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ochre);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .limitation-block .evidence-note a {
+    color: var(--ochre-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ===== Distortion list ===== */
+  .distortion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 40px 0;
+  }
+  .distortion-item {
+    background: var(--paper-deep);
+    padding: 24px;
+    border-left: 3px solid var(--teal);
+    border-radius: 0 4px 4px 0;
+  }
+  .distortion-item .icon-wrap {
+    margin-bottom: 16px;
+    color: var(--teal);
+  }
+  .distortion-item h4 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .distortion-item p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.85;
+    margin: 0;
+  }
+
+  /* ===== Case translation ===== */
+  .case-card {
+    background: var(--paper-deep);
+    padding: 40px;
+    margin: 40px 0;
+    border-radius: 4px;
+    border: 1px solid var(--line-soft);
+    position: relative;
+  }
+  .case-card::before {
+    content: 'CASE';
+    position: absolute;
+    top: -10px; left: 24px;
+    background: var(--terracotta);
+    color: var(--paper);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    padding: 4px 16px;
+    letter-spacing: 0.15em;
+    font-size: 13px;
+  }
+  .case-card .case-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    margin-top: 8px;
+  }
+  .case-card .score-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+  .case-card .score-pill {
+    background: var(--paper);
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    flex: 1;
+    min-width: 130px;
+    text-align: center;
+  }
+  .case-card .score-pill .lbl {
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .case-card .score-pill .val {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum";
+  }
+  .case-card .score-pill .ci {
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-feature-settings: "tnum";
+  }
+  .case-card .interpretation {
+    margin-top: 32px;
+  }
+  .case-card .interpretation h5 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .case-card .interpretation h5:first-child { margin-top: 0; }
+  .case-card .interpretation p {
+    font-size: 14px;
+    line-height: 1.85;
+  }
+  .case-card .accommodation-list {
+    list-style: none;
+    margin-top: 12px;
+  }
+  .case-card .accommodation-list li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .case-card .accommodation-list li:last-child { border-bottom: none; }
+  .case-card .accommodation-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 18px;
+    width: 16px;
+    height: 1px;
+    background: var(--terracotta);
+  }
+  .case-warning {
+    background: rgba(185,92,63,0.08);
+    border: 1px solid var(--terracotta-soft);
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--terracotta-deep);
+    line-height: 1.85;
+    border-radius: 4px;
+  }
+  .case-warning::before {
+    content: '注意';
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--terracotta);
+    margin-bottom: 6px;
+  }
+
+  /* ===== Theory: Timeline ===== */
+  .timeline-wrap {
+    position: relative;
+    margin: 48px 0;
+    padding-left: 28px;
+  }
+  .timeline-wrap::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--line);
+  }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 36px 24px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--terracotta);
+  }
+  .timeline-item .year {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--terracotta);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .timeline-item .who {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .timeline-item .what {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.85;
+    max-width: 720px;
+  }
+
+  /* ===== Theory: Three-stratum pyramid ===== */
+  .pyramid-wrap {
+    background: var(--paper-warm);
+    padding: 56px 32px;
+    margin: 48px 0;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .pyramid {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .pyramid-row {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .pyramid-row:last-child { margin-bottom: 0; }
+  .pyramid-band {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 18px 24px;
+    text-align: center;
+    position: relative;
+  }
+  .pyramid-row.top .pyramid-band {
+    background: var(--ink);
+    color: var(--paper);
+    max-width: 240px;
+    margin: 0 auto;
+  }
+  .pyramid-row.mid .pyramid-band {
+    background: var(--terracotta);
+    color: var(--paper);
+    border-color: var(--terracotta);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .pyramid-band .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .pyramid-band .name {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .pyramid-band .desc {
+    font-size: 12px;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+  .pyramid-row.bot {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 6px;
+  }
+  .pyramid-row.bot .pyramid-band {
+    padding: 10px 6px;
+    font-size: 10px;
+    background: var(--paper);
+    color: var(--ink-soft);
+  }
+  .pyramid-stratum-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-mute);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  /* ===== Theory: CHC-WAIS-IV mapping matrix ===== */
+  .chc-matrix {
+    margin: 56px 0;
+    background: var(--paper-deep);
+    padding: 36px 32px;
+    border-radius: 4px;
+    border: 1px solid var(--line-soft);
+  }
+  .chc-matrix table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .chc-matrix th {
+    text-align: left;
+    padding: 12px 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    border-bottom: 1.5px solid var(--ink);
+    font-weight: 500;
+  }
+  .chc-matrix td {
+    padding: 14px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+  .chc-matrix .wais-cell {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    color: var(--terracotta);
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .chc-matrix .chc-cell {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--teal);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .chc-matrix .chc-cell .code {
+    background: var(--teal);
+    color: var(--paper);
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-right: 8px;
+    font-style: normal;
+  }
+  .chc-matrix tr.combined .chc-cell .code {
+    background: var(--ochre);
+  }
+
+  /* Mobile responsive table adjustments */
+  @media (max-width: 720px) {
+    .chc-matrix {
+      padding: 24px 14px;
+      margin: 32px 0;
+    }
+    .chc-matrix table {
+      font-size: 12px;
+    }
+    .chc-matrix th {
+      padding: 8px 6px;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+    }
+    .chc-matrix td {
+      padding: 10px 6px;
+      line-height: 1.6;
+    }
+    .chc-matrix .wais-cell {
+      font-size: 12px;
+      white-space: normal;
+    }
+    .chc-matrix .chc-cell {
+      font-size: 12px;
+    }
+    .chc-matrix .chc-cell .code {
+      display: inline-block;
+      margin-bottom: 4px;
+      margin-right: 4px;
+      font-size: 10px;
+    }
+    .class-table {
+      font-size: 12px;
+    }
+    .class-table th, .class-table td {
+      padding: 8px 6px;
+    }
+    .class-table th {
+      font-size: 10px;
+      letter-spacing: 0.05em;
+    }
+    /* Allow horizontal scroll as fallback for very dense tables */
+    .chc-matrix table, .class-table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* CI demo mobile adjustments */
+  @media (max-width: 720px) {
+    .ci-demo {
+      padding: 24px 16px;
+    }
+    .ci-row {
+      gap: 12px;
+      margin: 32px 0;
+    }
+    .ci-label {
+      min-width: 100%;
+    }
+    .ci-bar-wrap {
+      min-width: 100%;
+    }
+  }
+
+  /* ===== Theory: Gf/Gc compare ===== */
+  .gfgc-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 48px 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .gfgc-cell {
+    padding: 36px 32px;
+    color: var(--paper);
+  }
+  .gfgc-cell.gf { background: var(--teal); }
+  .gfgc-cell.gc { background: var(--terracotta-deep); }
+  .gfgc-cell .gfgc-code {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    opacity: 0.75;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .gfgc-cell .gfgc-name {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+  .gfgc-cell .gfgc-tagline {
+    font-size: 14px;
+    line-height: 1.85;
+    margin-bottom: 24px;
+    opacity: 0.95;
+  }
+  .gfgc-cell .gfgc-attrs {
+    list-style: none;
+  }
+  .gfgc-cell .gfgc-attrs li {
+    padding: 8px 0;
+    border-top: 1px solid rgba(244,239,230,0.2);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .gfgc-cell .gfgc-attrs li .attr-key {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 2px;
+  }
+  @media (max-width: 760px) { .gfgc-compare { grid-template-columns: 1fr; } }
+
+  /* ===== Theory: Wechsler definition box ===== */
+  .definition-box {
+    background: var(--paper-deep);
+    border-left: 4px solid var(--ink);
+    padding: 32px 36px;
+    margin: 40px 0;
+    max-width: 800px;
+  }
+  .definition-box .def-source {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-mute);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .definition-box .def-quote {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    line-height: 1.85;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .definition-box .def-note {
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin-top: 16px;
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+  }
+
+  /* ===== Theory: Critique callout ===== */
+  .critique-block {
+    background: var(--paper-warm);
+    padding: 32px;
+    margin: 40px 0;
+    border-left: 3px solid var(--ochre);
+    border-radius: 0 4px 4px 0;
+  }
+  .critique-block .tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 8px;
+  }
+  .critique-block h4 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .critique-block p {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .critique-block p:last-child { margin-bottom: 0; }
+
+  /* ===== Two-column do/dont ===== */
+  .do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 40px 0;
+  }
+  .do-col, .dont-col {
+    padding: 32px;
+    border-radius: 4px;
+  }
+  .do-col {
+    background: var(--paper-deep);
+    border-top: 4px solid var(--teal);
+  }
+  .dont-col {
+    background: var(--paper-deep);
+    border-top: 4px solid var(--terracotta);
+  }
+  .do-col h4, .dont-col h4 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .do-col ul, .dont-col ul {
+    list-style: none;
+  }
+  .do-col li, .dont-col li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .do-col li:last-child, .dont-col li:last-child { border-bottom: none; }
+  .do-col li::before, .dont-col li::before {
+    position: absolute;
+    left: 0; top: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+  }
+  .do-col li::before { content: '〇'; color: var(--teal); }
+  .dont-col li::before { content: '×'; color: var(--terracotta); }
+  @media (max-width: 720px) { .do-dont { grid-template-columns: 1fr; } }
+
+  /* ===== References ===== */
+  .refs {
+    background: var(--paper-deep);
+    padding: 56px 32px;
+    margin-top: 80px;
+  }
+  .refs .refs-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .refs h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.4rem;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  .refs ol {
+    list-style: none;
+    counter-reset: ref-counter;
+  }
+  .refs li {
+    counter-increment: ref-counter;
+    padding: 16px 0 16px 48px;
+    position: relative;
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .refs li::before {
+    content: counter(ref-counter, decimal-leading-zero);
+    position: absolute;
+    left: 0; top: 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--terracotta);
+  }
+  .refs a {
+    color: var(--teal-deep);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.2s;
+    word-break: break-all;
+  }
+  .refs a:hover { text-decoration-color: var(--teal); }
+
+  /* ===== Footer ===== */
+  footer {
+    padding: 60px 32px;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 13px;
+    border-top: 1px solid var(--line-soft);
+  }
+  footer .name {
+    font-family: 'Noto Serif JP', serif;
+    color: var(--ink);
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== Reveal animation ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== Section anchor offset ===== */
+  section[id] { scroll-margin-top: 20px; }
+
+  /* ===== Print-friendly tweaks ===== */
+  @media print {
+    .top-nav, .progress-bar { display: none; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ========== HERO ========== -->
+<header class="hero">
+  <div class="eyebrow">For Vocational Transition Support Staff</div>
+  <h1>
+    WAIS-IV を読み、<br>
+    <span class="accent">支援につなぐ</span>。<br>
+    — 知能理論から<br>制度・倫理まで。
+  </h1>
+  <p class="subtitle">
+    結果票に並ぶ「FSIQ 92」「VCI 105」といった数字を、
+    そのまま受け取って利用者を理解した気になることほど、
+    支援の現場で危ういことはありません。
+    この資料は、WAIS-IVを支える知能理論から、検査の構造、数字の読み方、
+    プロフィール解釈の落とし穴、結果を歪める要因、支援設計への翻訳、
+    制度との接続、そして本人への伝え方の倫理までを、
+    エビデンスに基づいて一通り見渡せるようにまとめたものです。
+  </p>
+  <div class="scroll-cue">Scroll to read</div>
+</header>
+
+<!-- ========== 01 イントロ ========== -->
+<section class="chapter" id="ch01">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <div class="chapter-kicker">Misreadings</div>
+      <div class="chapter-title">「結果票だけ」で起こる、よくある誤読</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    WAIS-IVは、知能を完全に映し出す鏡ではありません。
+    ある条件下での、ある側面の認知パフォーマンスを推定したものです。
+    しかし結果票が一人歩きすると、現場ではこんな解釈が起こりがちです。
+  </p>
+
+  <div class="misconception-grid">
+    <div class="misconception-card reveal">
+      <span class="tag">Case A</span>
+      <p class="heard">FSIQが80を切っているから、就労は難しいですよね？</p>
+      <p class="reality">FSIQと就労成否の相関は、報告によって幅があり、
+        集団レベルの傾向にすぎません。同じ点数でも、職務内容・環境・支援設計で結果は大きく変わります。
+        FSIQは「予測ツール」ではなく、支援を考えるための一情報です。</p>
+    </div>
+    <div class="misconception-card reveal">
+      <span class="tag">Case B</span>
+      <p class="heard">PSIが低いということは、ASDですね。</p>
+      <p class="reality">処理速度の低さは、抑うつ、薬剤、疲労、ADHD、その他多くの要因で生じます。
+        ASD成人のメタ分析でも、PSIは平均よりやや低い傾向にとどまり、
+        個人差（heterogeneity）が極めて大きいため、診断指標としては機能しません。</p>
+    </div>
+    <div class="misconception-card reveal">
+      <span class="tag">Case C</span>
+      <p class="heard">IQが100あれば「普通」だから、配慮はいらないでしょう。</p>
+      <p class="reality">FSIQが平均でも、指標間に大きな差があれば本人の生活では大きな困りごとが生じます。
+        平均化された総合点は、得意と苦手の凸凹を見えなくする数字でもあります。</p>
+    </div>
+    <div class="misconception-card reveal">
+      <span class="tag">Case D</span>
+      <p class="heard">前回より15点上がりました。能力が伸びたんですね。</p>
+      <p class="reality">短期間での再検査では、練習効果（テストに慣れる効果）が大きく出ます。
+        WAIS-IV標準化サンプルでも、22日後の再検査で総合点は数点上昇します。
+        点数の上下を、能力の変化と短絡しないことが大切です。</p>
+    </div>
+  </div>
+
+  <blockquote class="pull-quote reveal">
+    数字は「人」ではない。<br>
+    数字は「ある日の、ある状況での、ある側面のパフォーマンスの推定値」である。
+  </blockquote>
+</section>
+
+<!-- ========== 02 知能理論 ========== -->
+<section class="chapter" id="ch02">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <div class="chapter-kicker">Foundations</div>
+      <div class="chapter-title">そもそも「知能」とは何か — WAIS-IVを支える理論</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    結果票の数字をどう読むかという話に入る前に、避けて通れない問いがあります。
+    そもそも、この検査は「何を測ろうとしている」のか。
+    WAIS-IVは100年以上にわたる知能研究の上に成り立っており、
+    その理論的背景を知らずに数字だけを扱うのは、地図を持たずに山に入るようなものです。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 12px;" class="reveal">ウェクスラー自身が定義した「知能」</h3>
+  <p class="reveal">
+    この検査の名前にあるDavid Wechsler（1896–1981）は、1939年に最初のWechsler-Bellevue Intelligence Scaleを発表した臨床心理学者です。
+    彼は知能を次のように定義しました。
+  </p>
+
+  <div class="definition-box reveal">
+    <div class="def-source">D. Wechsler (1944) — The Measurement of Adult Intelligence</div>
+    <p class="def-quote">
+      「知能とは、個人が目的的に行動し、合理的に考え、自分を取り巻く環境に効果的に対処するための、
+      総合的かつ全体的な能力である」
+    </p>
+    <p class="def-note">
+      原文：<em>"the aggregate or global capacity of the individual to act purposefully, to think rationally, and to deal effectively with his environment."</em>
+    </p>
+  </div>
+
+  <p class="reveal">
+    この定義には3つの重要な視点が織り込まれています。
+    第一に、知能は<strong>単一の力ではなく、複数の能力の集合体（aggregate）</strong>だということ。
+    第二に、知能は<strong>環境との相互作用</strong>の中で発揮される、実用的なものだということ。
+    第三に、知能は<strong>純粋な認知能力だけでなく、動機や情緒の側面も含む</strong>とウェクスラーは考えていたこと。
+    ところが現代のWAIS-IVが測れるのは、主に第一の「複数の認知能力」部分のみで、
+    動機や情緒の側面はほとんど含まれていません。これは検査の根本的な制約として後の章で再度触れます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">知能理論100年の系譜</h3>
+  <p class="reveal">
+    現代のWAIS-IVが基盤とする知能理論は、一夜にしてできたものではありません。
+    Spearman、Cattell、Horn、Carrollという研究者たちの仕事を経て、CHC理論として統合されました。
+  </p>
+
+  <div class="timeline-wrap reveal">
+    <div class="timeline-item">
+      <div class="year">1904</div>
+      <div class="who">Charles Spearman ／ g因子の発見</div>
+      <div class="what">
+        Spearmanは、複数の知能テストの成績が互いに正の相関を持つことを発見しました。
+        どんなテストでもよくできる人はよくでき、苦手な人は全般的に苦手な傾向がある。
+        この共通要因を<strong>g因子（general intelligence factor、一般知能因子）</strong>と呼び、
+        個別テストに固有の<strong>s因子（specific factor）</strong>と区別する「二因子説」を提唱しました。
+        WAIS-IVのFSIQは、現代の理論ではg因子の推定値とされます。
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1941 — 1963</div>
+      <div class="who">Raymond Cattell & John Horn ／ Gf-Gc理論</div>
+      <div class="what">
+        SpearmanのもとでPh.D.を取ったCattellは、後にg因子は一枚岩ではなく、
+        <strong>流動性知能 (fluid intelligence, Gf)</strong> と
+        <strong>結晶性知能 (crystallized intelligence, Gc)</strong> の2つに分けられると提唱しました（1941, 1963）。
+        その後、彼の弟子のJohn Horn が経験的研究でこの区分を発展させ、
+        視覚処理(Gv)、短期記憶(Gsm)、処理速度(Gs)などの広範な能力を追加していきました。
+        この拡張版が「Gf-Gc理論」と呼ばれ、現代の知能理論の主要な源流の一つとなっています。
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1993</div>
+      <div class="who">John B. Carroll ／ 三層構造モデル</div>
+      <div class="what">
+        Carrollは、20世紀のほぼすべての主要な知能データセット（460以上のデータ）を再分析する大仕事に取り組み、
+        その成果を <em>Human Cognitive Abilities: A Survey of Factor-Analytic Studies</em>(1993) として発表しました。
+        彼は知能を<strong>三層の階層構造（three-stratum theory）</strong>として整理しました。
+        頂上にg因子（一般知能）があり、中間層に約10前後のbroad ability（広範な能力：Gf, Gc, Gv, Gsm, Gs など）があり、
+        最下層には70以上のnarrow ability（より特異な能力）が並ぶ、という構造です。
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1997 — 現在</div>
+      <div class="who">Kevin McGrew ら ／ CHC理論への統合</div>
+      <div class="what">
+        Cattell-Horn の Gf-Gc 拡張モデルと Carroll の三層モデルは、互いに重なる部分が多いことから、
+        McGrew (1997, 2005) を中心に統合され、
+        <strong>Cattell-Horn-Carroll (CHC) 理論</strong>と呼ばれるようになりました。
+        現代の主要な知能検査（WAIS-IV, WISC-V, WJ-IV, KABC-II など）は、明示的にCHC理論を参照して設計されています。
+        WAIS-IVの「理論・解釈マニュアル」もCHC理論との対応について言及しています。
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">Carrollの三層構造を可視化する</h3>
+
+  <div class="pyramid-wrap reveal">
+    <div class="pyramid">
+      <div class="pyramid-stratum-tag">Stratum III ／ 第Ⅲ層</div>
+      <div class="pyramid-row top">
+        <div class="pyramid-band">
+          <div class="label">General</div>
+          <div class="name">g 因子</div>
+          <div class="desc">全ての認知活動に共通する一般知能</div>
+        </div>
+      </div>
+
+      <div class="pyramid-stratum-tag" style="margin-top:24px;">Stratum II ／ 第Ⅱ層 ／ Broad Abilities（広範な能力）</div>
+      <div class="pyramid-row mid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; max-width: 760px;">
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Gc</div>
+          <div class="desc">結晶性知能</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Gf</div>
+          <div class="desc">流動性推理</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Gv</div>
+          <div class="desc">視覚処理</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Gsm</div>
+          <div class="desc">短期記憶</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Gs</div>
+          <div class="desc">処理速度</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Ga</div>
+          <div class="desc">聴覚処理</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">Glr</div>
+          <div class="desc">長期記憶<br>検索</div>
+        </div>
+        <div class="pyramid-band" style="background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);">
+          <div class="name" style="font-size: 14px;">他</div>
+          <div class="desc">Gq, Grw 等</div>
+        </div>
+      </div>
+
+      <div class="pyramid-stratum-tag" style="margin-top:24px;">Stratum I ／ 第Ⅰ層 ／ Narrow Abilities（70以上）</div>
+      <div class="pyramid-row bot">
+        <div class="pyramid-band">語彙知識</div>
+        <div class="pyramid-band">言語理解</div>
+        <div class="pyramid-band">帰納推理</div>
+        <div class="pyramid-band">数量的<br>推理</div>
+        <div class="pyramid-band">空間関係</div>
+        <div class="pyramid-band">視覚記憶</div>
+        <div class="pyramid-band">記憶範囲</div>
+        <div class="pyramid-band">知覚速度</div>
+        <div class="pyramid-band">他多数</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="reveal">
+    このピラミッド構造の意味するところは重要です。
+    「知能は一つではなく、複数のレベルで階層的に組織されている」ということ。
+    そして、<strong>WAIS-IVの4つの指標（VCI, PRI, WMI, PSI）は、第Ⅱ層（broad abilities）にほぼ対応する</strong>、と現代では考えられています。
+    FSIQはこの全体の上にある第Ⅲ層 = g因子の推定値。
+    つまりWAIS-IVは、第Ⅱ層と第Ⅲ層の両方を測ろうとしている検査だと言えます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">WAIS-IVの指標とCHC因子の対応</h3>
+
+  <div class="chc-matrix reveal">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 28%;">WAIS-IVの指標</th>
+          <th style="width: 36%;">対応するCHC因子</th>
+          <th>意味</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="wais-cell">VCI<br>言語理解</td>
+          <td class="chc-cell"><span class="code">Gc</span>結晶性知能</td>
+          <td>これまでに獲得してきた言語的知識・概念。学校教育や文化的経験を通じて結晶化した能力。</td>
+        </tr>
+        <tr class="combined">
+          <td class="wais-cell">PRI<br>知覚推理</td>
+          <td class="chc-cell"><span class="code">Gv + Gf</span>視覚処理 + 流動性推理</td>
+          <td>視覚的情報を処理する力（Gv）と、新しい問題に対する論理的推論能力（Gf）が混在している。これがWAIS-IVの構造上の議論の中心。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">WMI<br>ワーキング<br>メモリー</td>
+          <td class="chc-cell"><span class="code">Gsm</span>短期記憶<br>（Gwm）</td>
+          <td>情報を一時的に保持し操作する能力。CHC理論では Short-term Memory（Gsm）またはWorking Memory（Gwm）として扱われる。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">PSI<br>処理速度</td>
+          <td class="chc-cell"><span class="code">Gs</span>処理速度</td>
+          <td>単純な視覚情報を、速く正確に処理する力。注意・反応速度・視覚-運動協応を反映する。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">
+    この対応表で特に注目すべきは <strong>PRI（知覚推理）が Gv と Gf の混合になっている</strong>点です。
+    CHC理論的にはこの2つは別の能力ですが、WAIS-IVでは1つの指標にまとめられている。
+    これは便宜上のものであり、より理論的に厳密に分けたモデル（5因子モデル：Gc, Gf, Gv, Gsm, Gs）の方が
+    実際のデータへの当てはまりが良いという報告が複数あります（Benson ら, 2010；Italian validation; Dutch version；van Aken ら, 2015 など）。
+    こうした研究を受けて、WAIS-V（2024年に米国版が刊行）では Gf と Gv を分離する方向に構造が変更されました。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">最重要：流動性知能 (Gf) と結晶性知能 (Gc) の違い</h3>
+  <p class="reveal">
+    GfとGcの区別は、就労移行支援の現場でも理解しておく価値があります。
+    同じ「考える力」と言っても、まったく異なる種類の認知能力です。
+  </p>
+
+  <div class="gfgc-compare reveal">
+    <div class="gfgc-cell gf">
+      <div class="gfgc-code">Gf</div>
+      <div class="gfgc-name">流動性推理<br>Fluid Reasoning</div>
+      <p class="gfgc-tagline">
+        新しい問題に対して、ことばや知識に頼らずに、論理を組み立てて答えを導く力。
+        「未知の状況で考える力」。
+      </p>
+      <ul class="gfgc-attrs">
+        <li><span class="attr-key">WAIS-IVでは</span>PRIの一部（行列推理、パズル）が反映</li>
+        <li><span class="attr-key">文化・教育の影響</span>受けにくいとされる</li>
+        <li><span class="attr-key">加齢パターン</span>20代をピークに緩やかに低下</li>
+        <li><span class="attr-key">仕事の場面で見える形</span>新しいツール・手順を試行錯誤で覚える、未経験の問題への対応、即興的な判断</li>
+      </ul>
+    </div>
+    <div class="gfgc-cell gc">
+      <div class="gfgc-code">Gc</div>
+      <div class="gfgc-name">結晶性知能<br>Crystallized Intelligence</div>
+      <p class="gfgc-tagline">
+        これまでの人生で獲得・蓄積してきた知識、語彙、概念、社会常識。
+        「学習と経験の結晶」。
+      </p>
+      <ul class="gfgc-attrs">
+        <li><span class="attr-key">WAIS-IVでは</span>VCI（言語理解）が反映</li>
+        <li><span class="attr-key">文化・教育の影響</span>強く受ける</li>
+        <li><span class="attr-key">加齢パターン</span>60代まで上昇し続けることもある</li>
+        <li><span class="attr-key">仕事の場面で見える形</span>専門知識の活用、過去経験の応用、語彙力を要する業務、文書理解</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="reveal">
+    現場でこの区別が重要になるのは、たとえばこんな時です。
+    若い時に学習機会に恵まれなかった人は <strong>Gc が低めに出ることがあっても、Gf は高い</strong>かもしれません。
+    逆に、長く同じ業務をしてきた高齢者は <strong>Gc が高く維持されている一方で、Gf は低下している</strong>こともあります。
+    「能力が低い／高い」と一括りにせず、どの種類の能力が、どの程度発揮されているかを見ることが、適切な支援設計につながります。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">理論的な批判：WAIS-IVの構造そのものが議論されている</h3>
+
+  <div class="critique-block reveal">
+    <div class="tag">Structural Validity Critique</div>
+    <h4>「4つの指標は、本当に独立した能力を測っているのか？」</h4>
+    <p>
+      Canivez, Watkins らの研究グループは、WAIS-IVの標準化サンプルを bifactor 分析（g因子と群因子を同時にモデル化する手法）と階層的探索的因子分析で再検討してきました。
+      その結果、<strong>共通分散の大部分は g因子が説明し、4つの群因子（VCI/PRI/WMI/PSI）が独自に説明する分散は小さい</strong>ことが繰り返し報告されています
+      （たとえば Canivez & Watkins (2010); Gignac & Watkins (2013); Nelson, Canivez, & Watkins (2013) を参照）。
+      Gignac & Watkins (2013) の bifactor 分析では、4指標の独自分散の信頼性 (ωs) は VC=.29、PR=.16、WM=.13、PS=.44 と報告されています（20–34歳群）。
+    </p>
+    <p>
+      実用的な含意としては、<strong>「FSIQ（g因子）を解釈することは比較的妥当だが、4指標を独立した能力として個別に解釈することの心理測定学的な根拠は、検査出版社が主張するほど強くない」</strong>ということです。
+      この観点は、第7章で述べる「プロフィール解釈の信頼性問題」と直結します。
+    </p>
+    <p>
+      ただし、Canivez らの結論をどう受け止めるかは現在も議論中です。
+      bifactor モデルは higher-order モデルより当てはまりが良く出やすいというモデル選択上のバイアスが指摘されており（Murray & Johnson, 2013）、
+      Weiss ら（検査開発側）は、4指標の臨床的有用性を擁護する立場をとっています（Weiss et al., 2013）。
+      現場としては「4指標は完全に独立した能力ではなく、g因子の影響を強く受けたものとして読む」というスタンスが、最も誠実だと思われます。
+    </p>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">そもそも「知能」を測ることへの哲学的批判</h3>
+
+  <p class="reveal">
+    CHC理論は、現代の主流的な知能理論ではありますが、唯一の見方ではありません。
+    「知能とは何か」という問いには、まだ決着していない深い論争があります。
+  </p>
+
+  <div class="critique-block reveal">
+    <div class="tag">Multiple Intelligences</div>
+    <h4>Howard Gardner ／ 多重知能理論（1983）</h4>
+    <p>
+      Gardnerは、人間の知能は単一でも数個でもなく、互いに比較的独立した<strong>8つ程度の知能領域</strong>から成ると主張しました。
+      言語的知能、論理-数学的知能、空間的知能、身体運動的知能、音楽的知能、対人的知能、内省的知能、博物的知能。
+      この理論はCHC理論ほどの実証的支持は得られていませんが、
+      WAIS-IVが測っているのは主に言語・論理・空間の3領域だけで、他の領域は測れていない――
+      という視点として教育・支援現場で価値を持ち続けています。
+    </p>
+  </div>
+
+  <div class="critique-block reveal">
+    <div class="tag">Practical Intelligence</div>
+    <h4>Robert Sternberg ／ 三頭理論（1985）と実用知</h4>
+    <p>
+      Sternbergは、学校的・分析的知能（WAIS-IVが測れる領域）に加えて、
+      <strong>創造的知能（新しい状況への対応）と実用知（実際の生活や職場で生きる賢さ）</strong>を含めた知能観を提唱しました。
+      就労継続を考える時、この「実用知」――上司の機嫌を察する、空気を読んで判断する、その場の暗黙のルールを読み取る――は決定的に重要ですが、
+      WAIS-IVはほとんど測れません。検査でIQが高くても職場で苦労する人、低めでも上手くやる人がいる理由の一端はここにあります。
+    </p>
+  </div>
+
+  <div class="critique-block reveal">
+    <div class="tag">Flynn Effect</div>
+    <h4>フリン効果 ／ 知能は時代と共に変化する</h4>
+    <p>
+      ジェームズ・フリン（James Flynn）は、20世紀を通じて世界各国で、世代ごとに平均IQが約3点／10年ずつ上昇してきた現象を報告しました（1984, 1987）。
+      この事実は、<strong>「知能」とされるものが、生物学的に固定された能力ではなく、教育、栄養、生活環境、検査になじむ程度などに依存して変動する</strong>ことを示しています。
+      WAIS-IVが10年ごとに改訂・再標準化されるのもこのためです。
+      検査の点数を「その人の本来の能力」と固定的に受け止めるべきではない、という根拠の一つでもあります。
+    </p>
+  </div>
+
+  <div class="critique-block reveal">
+    <div class="tag">Cultural Bias</div>
+    <h4>文化的構成性 ／ 「西洋的・学校的な賢さ」のバイアス</h4>
+    <p>
+      ウェクスラー系の知能検査は、20世紀初頭に西洋（特に米国）の学校教育文化の中で発達してきました。
+      そこで「賢さ」とされるもの――速く正確に言語で説明する、論理的に推論する、抽象的な記号を扱う――は、
+      実は文化に深く埋め込まれた価値観でもあります。
+      他の文化圏で重視される認知能力（口承文化での記憶、関係性の中で判断する力、自然環境を読む力）は測られていません。
+      <strong>WAIS-IVが測れる「知能」は、現代の学校的・職場的文脈における認知能力の一断面である</strong>と理解しておくことが、検査結果を本人の総合的な能力評価と混同しないために重要です。
+    </p>
+  </div>
+
+  <blockquote class="pull-quote reveal">
+    WAIS-IVは「知能」そのものを測っているのではない。<br>
+    <em>ある特定の理論（CHC理論）の枠組みで、ある特定の能力群の現在のパフォーマンスを推定している</em>。
+    <span class="attrib">この前提を理解した上で初めて、結果票の数字を誠実に扱えるようになります。</span>
+  </blockquote>
+</section>
+
+<!-- ========== 03 構造 ========== -->
+<section class="chapter" id="ch03">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <div class="chapter-kicker">Anatomy</div>
+      <div class="chapter-title">理論を踏まえて — WAIS-IVの構造を見る</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    前章で見た知能理論を踏まえると、WAIS-IVの構造は意図的にデザインされていることが分かります。
+    16歳0ヶ月から90歳11ヶ月までを対象とした個別実施型の検査で、
+    15個の下位検査を組み合わせて、CHC理論の主要因子に対応する4つの指標と、g因子の推定値であるFSIQを算出します。
+  </p>
+
+  <p class="reveal">
+    日本版は<strong>2018年8月</strong>に日本文化科学社から刊行されました（米国原版は2008年）。
+    刊行委員は上野一彦、石隈利紀、大六一志、松田修、山中克夫の各氏で、
+    日本人標準化サンプルに基づいて、米国版とは独立に基準データが作られています。
+  </p>
+
+  <div class="tree-wrap reveal">
+    <div class="tree">
+      <!-- Level 1: FSIQ -->
+      <div class="node fsiq">FSIQ ／ 全検査IQ<br>
+        <span style="font-size:11px; font-weight:400; font-family: 'Cormorant Garamond', serif; font-style: italic;">全体的な認知パフォーマンスの推定値</span>
+      </div>
+      <div class="level-line"></div>
+
+      <!-- Level 2: 4 indices -->
+      <div class="branch-row">
+        <div class="branch-col">
+          <div class="node index">言語理解<span class="en">VCI</span></div>
+          <div class="level-line" style="height:24px;"></div>
+          <div class="node sub">類似</div>
+          <div class="node sub">単語</div>
+          <div class="node sub">知識</div>
+          <div class="node sub supp">理解</div>
+        </div>
+        <div class="branch-col">
+          <div class="node index">知覚推理<span class="en">PRI</span></div>
+          <div class="level-line" style="height:24px;"></div>
+          <div class="node sub">積木模様</div>
+          <div class="node sub">行列推理</div>
+          <div class="node sub">パズル</div>
+          <div class="node sub supp">バランス</div>
+          <div class="node sub supp">絵の完成</div>
+        </div>
+        <div class="branch-col">
+          <div class="node index">ワーキングメモリー<span class="en">WMI</span></div>
+          <div class="level-line" style="height:24px;"></div>
+          <div class="node sub">数唱</div>
+          <div class="node sub">算数</div>
+          <div class="node sub supp">語音整列</div>
+        </div>
+        <div class="branch-col">
+          <div class="node index">処理速度<span class="en">PSI</span></div>
+          <div class="level-line" style="height:24px;"></div>
+          <div class="node sub">記号探し</div>
+          <div class="node sub">符号</div>
+          <div class="node sub supp">絵の抹消</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="sw core"></span>基本検査（10種類）</span>
+        <span><span class="sw supp"></span>補助検査（5種類・破線）</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="reveal">
+    通常の臨床場面では、まず<strong>10個の基本検査</strong>を実施し、
+    そこから FSIQ と 4 つの指標得点が計算されます。
+    補助検査は、基本検査が実施できなかった場合の代替や、
+    プロセス得点（解き方のクセを見るための追加情報）の算出に使われます。
+    なお、補助検査のうち「バランス」「語音整列」「絵の抹消」は、16〜69歳の年齢層でのみ実施可能です。
+  </p>
+</section>
+
+<!-- ========== 03 4つの指標 ========== -->
+<section class="chapter" id="ch04">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <div class="chapter-kicker">The Four Indices</div>
+      <div class="chapter-title">4つの指標は、それぞれ何を測っているのか</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    「言語理解」「知覚推理」「ワーキングメモリー」「処理速度」――
+    名前を聞いただけでは何のことかピンと来ません。
+    ここでは、それぞれの指標を、技術的な意味と
+    「日常や仕事の場面でどう現れるか」の両方から見ていきます。
+  </p>
+
+  <!-- VCI -->
+  <div class="index-detail terr reveal">
+    <div class="head-col">
+      <div class="index-code">i.</div>
+      <div>
+        <div class="index-name">言語理解指標<br>VCI</div>
+      </div>
+      <div class="plain-name">
+        ことばを使って考え、説明し、知識を引き出す力。
+        言語を通した「概念を扱う力」と「学校的・社会的に学んできた知識」の総合。
+      </div>
+    </div>
+    <div class="body-col">
+      <h4>技術的に測っているもの</h4>
+      <p>結晶性知能（これまでに獲得してきた言語的知識・概念）と、言語による推理・抽象化能力。
+        教育機会や言語環境の影響を強く受けます。</p>
+
+      <h4>含まれる下位検査</h4>
+      <div class="subtests">
+        <span>類似</span><span>単語</span><span>知識</span><span class="supp">理解（補助）</span>
+      </div>
+
+      <h4>仕事の場面で見えるサイン</h4>
+      <div class="work-signal">
+        VCIが相対的に高い人は、口頭での説明、文書作成、概念的な議論を得意とする傾向。
+        逆に相対的に低いと、抽象的な業務指示や、複雑な文書の読解で疲弊しやすいことがあります。
+        ただし「言語表現が苦手＝VCIが低い」とは限りません。場面緘黙・社交不安・うつ症状でも口数は減ります。
+      </div>
+    </div>
+  </div>
+
+  <!-- PRI -->
+  <div class="index-detail teal reveal">
+    <div class="head-col">
+      <div class="index-code">ii.</div>
+      <div>
+        <div class="index-name">知覚推理指標<br>PRI</div>
+      </div>
+      <div class="plain-name">
+        目で見た情報を頭の中で操作して、パターンや関係を読み解く力。
+        ことばを介さない「考える力」。
+      </div>
+    </div>
+    <div class="body-col">
+      <h4>技術的に測っているもの</h4>
+      <p>流動性推理（fluid reasoning）と視覚空間処理。新しい問題に対して、
+        ことばに頼らずに視覚的な操作で答えを導く能力です。教育歴の影響を比較的受けにくい指標とされます。</p>
+
+      <h4>含まれる下位検査</h4>
+      <div class="subtests">
+        <span>積木模様</span><span>行列推理</span><span>パズル</span>
+        <span class="supp">バランス（補助）</span><span class="supp">絵の完成（補助）</span>
+      </div>
+
+      <h4>仕事の場面で見えるサイン</h4>
+      <div class="work-signal">
+        PRIが高い人は、図やレイアウト、機械や仕組みの理解、空間把握を要する作業（組立、配置、データの可視化）で力を発揮します。
+        相対的に低いと、フローチャートや図表での説明より、文字で順を追った説明の方が伝わりやすいことが多くあります。
+      </div>
+    </div>
+  </div>
+
+  <!-- WMI -->
+  <div class="index-detail ochre reveal">
+    <div class="head-col">
+      <div class="index-code">iii.</div>
+      <div>
+        <div class="index-name">ワーキング<br>メモリー指標<br>WMI</div>
+      </div>
+      <div class="plain-name">
+        頭の中で情報を一時的に保持しながら、同時に操作する力。
+        「メモを取らずに、覚えながら考える」能力。
+      </div>
+    </div>
+    <div class="body-col">
+      <h4>技術的に測っているもの</h4>
+      <p>聴覚的ワーキングメモリー、注意の持続、暗算処理を反映します。
+        WMIは、抑うつ、不安、ADHD、不眠、薬剤の影響を強く受けやすい指標としても知られています。</p>
+
+      <h4>含まれる下位検査</h4>
+      <div class="subtests">
+        <span>数唱</span><span>算数</span><span class="supp">語音整列（補助）</span>
+      </div>
+
+      <h4>仕事の場面で見えるサイン</h4>
+      <div class="work-signal">
+        WMIが相対的に低い人にとって、口頭での複数指示、電話を聞きながらのメモ、暗算を伴う作業は強い負荷になります。
+        「指示を忘れてしまう」「途中で何をやっていたか分からなくなる」――これらは怠惰ではなく、
+        頭の中の作業台が狭いために起きていることが多いと考えてください。
+      </div>
+    </div>
+  </div>
+
+  <!-- PSI -->
+  <div class="index-detail ink reveal">
+    <div class="head-col">
+      <div class="index-code">iv.</div>
+      <div>
+        <div class="index-name">処理速度指標<br>PSI</div>
+      </div>
+      <div class="plain-name">
+        単純な視覚情報を、速く正確に処理する力。
+        「決まった作業を、決まった通りに、速くこなす」能力。
+      </div>
+    </div>
+    <div class="body-col">
+      <h4>技術的に測っているもの</h4>
+      <p>視覚的な情報処理スピード、注意の集中、視覚-運動協応、筆記スピード。
+        多くの精神状態（抑うつ、疲労、薬剤、不安）と、加齢の影響を最も受けやすい指標です。</p>
+
+      <h4>含まれる下位検査</h4>
+      <div class="subtests">
+        <span>記号探し</span><span>符号</span><span class="supp">絵の抹消（補助）</span>
+      </div>
+
+      <h4>仕事の場面で見えるサイン</h4>
+      <div class="work-signal">
+        PSIが相対的に低い人は、決まったフォーマットへの入力、データチェック、ピッキング作業など
+        「速さを求められる単純作業」で苦しむことが多いです。
+        逆に、考える時間が確保される業務（企画、検討、調整、対人援助）では、
+        PSIの低さがほとんど問題にならない場合もあります。
+      </div>
+    </div>
+  </div>
+
+  <p class="reveal">
+    これら4つの指標を、米国の臨床心理学者ローレンス・ワイス（Lawrence Weiss）らは、
+    <strong>VCIとPRIが「考える力（reasoning）」</strong>、
+    <strong>WMIとPSIが「考える力を支えるインフラ」</strong>と整理しています。
+    実際、WMI と PSI が著しく低い場合は、たとえVCIやPRIの「考える力」が高くても、
+    実生活でその力を発揮しにくい――この観点が、後で説明する <strong>GAI（一般知的能力指標）</strong> の必要性につながります。
+  </p>
+</section>
+
+<!-- ========== 04 数字の読み方 ========== -->
+<section class="chapter" id="ch05">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <div class="chapter-kicker">Reading the Numbers</div>
+      <div class="chapter-title">数字の読み方 — 平均、分布、信頼区間</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    FSIQ や指標得点は、すべて「平均100、標準偏差15」の物差しに揃えてあります。
+    つまり、人口の中での相対的な位置を示す数字です。
+    ここを理解しないと、点数を「絶対的な能力値」と誤解してしまいます。
+  </p>
+
+  <div class="curve-wrap reveal">
+    <svg viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet">
+      <!-- Bell curve -->
+      <defs>
+        <linearGradient id="curveFill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#B95C3F" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#B95C3F" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Vertical zone dividers -->
+      <line x1="120" y1="50" x2="120" y2="220" stroke="#C8BCA6" stroke-dasharray="2,3"/>
+      <line x1="220" y1="50" x2="220" y2="220" stroke="#C8BCA6" stroke-dasharray="2,3"/>
+      <line x1="320" y1="50" x2="320" y2="220" stroke="#C8BCA6" stroke-dasharray="2,3"/>
+      <line x1="400" y1="50" x2="400" y2="220" stroke="#1A2333" stroke-width="1.5"/>
+      <line x1="480" y1="50" x2="480" y2="220" stroke="#C8BCA6" stroke-dasharray="2,3"/>
+      <line x1="580" y1="50" x2="580" y2="220" stroke="#C8BCA6" stroke-dasharray="2,3"/>
+      <line x1="680" y1="50" x2="680" y2="220" stroke="#C8BCA6" stroke-dasharray="2,3"/>
+
+      <!-- Curve path -->
+      <path d="M 60 220 Q 200 220, 280 180 Q 360 80, 400 60 Q 440 80, 520 180 Q 600 220, 740 220 L 740 220 L 60 220 Z" fill="url(#curveFill)"/>
+      <path d="M 60 220 Q 200 220, 280 180 Q 360 80, 400 60 Q 440 80, 520 180 Q 600 220, 740 220" stroke="#1A2333" stroke-width="1.5" fill="none"/>
+
+      <!-- Axis -->
+      <line x1="40" y1="220" x2="760" y2="220" stroke="#1A2333" stroke-width="1.5"/>
+
+      <!-- IQ ticks -->
+      <g font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="#1A2333" text-anchor="middle">
+        <text x="120" y="240">55</text>
+        <text x="220" y="240">70</text>
+        <text x="320" y="240">85</text>
+        <text x="400" y="240" font-weight="600">100</text>
+        <text x="480" y="240">115</text>
+        <text x="580" y="240">130</text>
+        <text x="680" y="240">145</text>
+      </g>
+
+      <!-- SD labels -->
+      <g font-family="Cormorant Garamond" font-style="italic" font-size="11" fill="#5A6478" text-anchor="middle">
+        <text x="120" y="258">-3SD</text>
+        <text x="220" y="258">-2SD</text>
+        <text x="320" y="258">-1SD</text>
+        <text x="400" y="258" fill="#1A2333">Mean</text>
+        <text x="480" y="258">+1SD</text>
+        <text x="580" y="258">+2SD</text>
+        <text x="680" y="258">+3SD</text>
+      </g>
+
+      <!-- Percentage labels for SD bands -->
+      <g font-family="Cormorant Garamond" font-style="italic" font-size="11" fill="#B95C3F">
+        <text x="360" y="155" text-anchor="middle">34.1%</text>
+        <text x="440" y="155" text-anchor="middle">34.1%</text>
+        <text x="270" y="195" text-anchor="middle">13.6%</text>
+        <text x="530" y="195" text-anchor="middle">13.6%</text>
+        <text x="180" y="213" text-anchor="middle" font-size="9">2.1%</text>
+        <text x="620" y="213" text-anchor="middle" font-size="9">2.1%</text>
+      </g>
+
+      <!-- Bracket annotations -->
+      <g stroke="#5A6478" stroke-width="0.8" fill="none">
+        <path d="M 320 70 L 320 60 L 480 60 L 480 70"/>
+        <path d="M 220 30 L 220 22 L 580 22 L 580 30"/>
+      </g>
+      <g font-family="Cormorant Garamond" font-style="italic" font-size="10" fill="#5A6478" text-anchor="middle">
+        <text x="400" y="56">±1SD（85–115）に約68%</text>
+        <text x="400" y="18">±2SD（70–130）に約95%</text>
+      </g>
+    </svg>
+    <p class="curve-caption">
+      WAIS-IV のすべての合成得点は、人口の中で「ちょうど真ん中にあたる人」が100点になるよう設計されています。
+      標準偏差は15。68%の人は85〜115の範囲に、95%の人は70〜130の範囲に収まります。
+    </p>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 48px 0 16px;" class="reveal">スコアの分類カテゴリー（日本版WAIS-IV）</h3>
+
+  <table class="class-table reveal">
+    <thead>
+      <tr>
+        <th>合成得点の範囲</th>
+        <th>分類名</th>
+        <th class="pct">人口に占める割合</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>130 以上</td><td>非常に高い（Very Superior）</td><td class="pct">約 2.2%</td></tr>
+      <tr><td>120 – 129</td><td>高い（Superior）</td><td class="pct">約 6.7%</td></tr>
+      <tr><td>110 – 119</td><td>平均の上（High Average）</td><td class="pct">約 16.1%</td></tr>
+      <tr><td>90 – 109</td><td>平均（Average）</td><td class="pct">約 50.0%</td></tr>
+      <tr><td>80 – 89</td><td>平均の下（Low Average）</td><td class="pct">約 16.1%</td></tr>
+      <tr><td>70 – 79</td><td>低い（Borderline）</td><td class="pct">約 6.7%</td></tr>
+      <tr><td>69 以下</td><td>非常に低い（Extremely Low）</td><td class="pct">約 2.2%</td></tr>
+    </tbody>
+  </table>
+
+  <p class="reveal">
+    ここで重要な観点が2つあります。
+    第一に、これらの<strong>分類は連続的な数字に対して人為的に引かれた線</strong>であって、
+    実体的な「カテゴリー」ではありません。
+    FSIQ 89(平均の下) と 90(平均) の人は、本質的な違いがあるのではなく、
+    たまたま線のどちら側に落ちたかの違いです。
+  </p>
+  <p class="reveal">
+    第二に、<strong>個別の点数には必ず誤差があります</strong>。
+    だから、結果票には信頼区間（CI: Confidence Interval）が併記されています。
+    これは「真の値はおそらくこの範囲にある」という幅です。
+  </p>
+
+  <!-- Confidence Interval Demo -->
+  <div class="ci-demo reveal">
+    <h4 style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; margin-bottom: 24px;">同じ「FSIQ 95」と書いてあっても、誤差を含めて読むとこうなります</h4>
+    <div class="ci-row">
+      <div class="ci-label">
+        <strong>FSIQ：95</strong>
+        90%信頼区間 90–101
+      </div>
+      <div class="ci-bar-wrap">
+        <div class="ci-axis"></div>
+        <div class="ci-bar" style="left:33.3%; right:48.3%;">
+          <span class="range-label left">90</span>
+          <span class="range-label right">101</span>
+          <div class="point" style="left:45.5%;"></div>
+          <span class="range-label center">95</span>
+        </div>
+        <div class="ci-scale"><span>70</span><span>85</span><span>100</span><span>115</span><span>130</span></div>
+      </div>
+    </div>
+    <div class="ci-row">
+      <div class="ci-label">
+        <strong>同じ人のVCI：105</strong>
+        90%信頼区間 99–110
+      </div>
+      <div class="ci-bar-wrap">
+        <div class="ci-axis"></div>
+        <div class="ci-bar" style="left:48.3%; right:33.3%;">
+          <span class="range-label left">99</span>
+          <span class="range-label right">110</span>
+          <div class="point" style="left:54.5%;"></div>
+          <span class="range-label center">105</span>
+        </div>
+        <div class="ci-scale"><span>70</span><span>85</span><span>100</span><span>115</span><span>130</span></div>
+      </div>
+    </div>
+    <p style="font-size:13px; margin-top: 16px;">
+      点数を語る時に「ピンポイントの数値」ではなく「幅」で語ること。
+      これは数学的な正確さの問題であると同時に、本人に対するフェアネスの問題でもあります。
+      「あなたのIQは92です」と告げるのと、
+      「あなたの今回の総合的なスコアは88〜97の範囲にあると推定されます」と伝えるのとでは、
+      聞き手の受け止め方は大きく変わります。
+    </p>
+  </div>
+</section>
+
+<!-- ========== 05 プロフィール分析・GAI ========== -->
+<section class="chapter" id="ch06">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">06</div>
+    <div>
+      <div class="chapter-kicker">Profile, GAI & CPI</div>
+      <div class="chapter-title">指標の「凸凹」をどう読むか — GAIとCPIという代替指標</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    FSIQ をひとつの数字だけで見ると、平均化された姿しか見えません。
+    4つの指標を比較し、「強み」と「苦手」のパターンを読むことを
+    プロフィール分析と呼びます。ただし、この読み方には独特の落とし穴があります。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 24px 0 12px;" class="reveal">指標間の差（ディスクレパンシー）を読む際の二段階</h3>
+
+  <div class="compare-grid">
+    <div class="compare-cell stat reveal">
+      <div class="head">Step 1</div>
+      <h3>統計的に有意か？</h3>
+      <p>「この差は、誤差では説明できないほど大きいか」という統計的な問い。
+        マニュアルにある臨界値表で確認します。</p>
+      <p>例：VCI − PSI が 10 点以上なら、たいてい統計的に有意です。
+        しかし<strong>有意 ≠ 臨床的に意味がある</strong>。次のステップが必要です。</p>
+    </div>
+    <div class="compare-cell freq reveal">
+      <div class="head">Step 2</div>
+      <h3>その差は珍しいか？</h3>
+      <p>「この差は、健常群の何%の人に見られるものか」という出現率（基準率）の問い。
+        マニュアルの基準率表で確認します。</p>
+      <p>たとえばVCI − PSI = 10 という差は、健常群でも 30〜40% の人に見られるありふれた差です。
+        珍しい（10〜15%以下）ようなら、本人の生活上の意味が大きい可能性があります。</p>
+    </div>
+  </div>
+
+  <p class="reveal">
+    つまり、「指標間に差がある」だけで意味づけしてはいけません。
+    その差が <strong>稀かどうか</strong> を確認してはじめて、その人固有のパターンとして読み始めることができます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 12px;" class="reveal">個人内の強み・弱み（PS／PW）</h3>
+  <p class="reveal">
+    Personal Strength（個人内強み）と Personal Weakness（個人内弱み）は、
+    その人自身の4指標の<strong>平均との差</strong>を見る分析です。
+    「他人と比べて高い／低い」ではなく、「その人の中で相対的に高い／低い」という見方です。
+    支援設計では、この個人内の凸凹こそが実用的な情報源になります。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 12px;" class="reveal">FSIQ が解釈できない時に登場する「GAI」</h3>
+  <p class="reveal">
+    4つの指標のうち最高得点と最低得点の差が <strong>23点（1.5SD）以上</strong>あるとき、
+    FSIQ という「総合点」は、本人の能力像を歪めて表してしまいます。
+    指標間のばらつきが大きすぎて、ひとつの数字でまとめるのが妥当ではないからです。
+    このとき、解釈マニュアルでは <strong>GAI（General Ability Index ／ 一般知的能力指標）</strong>を代わりに使うことが検討されます。
+  </p>
+  <p class="reveal">
+    GAIは、VCIとPRIの6つの基本検査だけから算出されます。
+    つまり<strong>WMIとPSIの影響を除いた、「考える力」だけを取り出した指標</strong>です。
+    抑うつ、ADHD、薬剤の影響などで WMI／PSI が下がっている人の場合、
+    FSIQ よりも GAI のほうが「その人の本来の認知能力」を反映するとされます。
+  </p>
+  <p class="reveal">
+    ただし、GAI が使えるためには <strong>VCI と PRI の差が23点（1.5SD）未満であること</strong>が条件です。
+    VCI と PRI の差も大きい場合は、もはや「考える力」を一つの数字で代表させることもできず、
+    GAI も解釈できない――つまり FSIQ も GAI も意味をなさないと判断されます。
+    この時は、4つの指標それぞれを個別に読み解くしかありません。
+  </p>
+  <p class="reveal">
+    また、GAI を採用する判断は心理検査者の臨床的判断によるものです。
+    日常生活では WMI と PSI も実用的に重要ですから、
+    GAI だけを見て「この人の本当の力」と断じることもまた、別の偏りを生みます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 12px;" class="reveal">CPI：「考える力を支えるインフラ」を切り出す指標</h3>
+  <p class="reveal">
+    GAI と対になる補助合成得点が <strong>CPI（Cognitive Proficiency Index ／ 認知熟達度指標）</strong>です。
+    GAI が VCI + PRI（考える力）から算出されるのに対し、
+    CPI は <strong>WMI + PSI（情報を素早く保持し処理するインフラ的能力）</strong>から算出されます。
+    日本版WAIS-IVでもこの指標を算出できます。
+  </p>
+  <p class="reveal">
+    CPIが反映する能力は、「熟達によって自動化され、情報を流ちょうに処理する力」と説明されます。
+    読み書き、暗算、聞きながらメモを取る、複数の指示を同時に保持する――
+    日常生活や職場で「言われなくてもできる、流れに乗って処理する」場面で発揮される能力です。
+  </p>
+
+  <div class="ci-demo reveal" style="background: var(--paper-warm);">
+    <h4 style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; margin-bottom: 16px;">GAI と CPI の組み合わせから見える4つのパターン</h4>
+    <table class="class-table" style="margin: 12px 0;">
+      <thead>
+        <tr>
+          <th>パターン</th>
+          <th>意味するもの</th>
+          <th>現場での見え方</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GAI ≒ CPI</td>
+          <td>考える力とインフラがバランスしている</td>
+          <td>能力と作業遂行が一致しやすく、FSIQ がその人の総合像をよく表す</td>
+        </tr>
+        <tr>
+          <td>GAI &gt; CPI</td>
+          <td>考える力は高いが、それを支えるインフラが追いつかない</td>
+          <td>「分かっているのに、作業速度や記憶の保持で苦労する」。発達障害、ADHD、抑うつ、薬剤の影響でよく見られるパターン</td>
+        </tr>
+        <tr>
+          <td>GAI &lt; CPI</td>
+          <td>処理は速くこなせるが、抽象的な概念形成が相対的に弱い</td>
+          <td>「速く正確だが、複雑な判断や応用に時間がかかる」。定型的な作業との相性が良い場合がある</td>
+        </tr>
+        <tr>
+          <td>両方とも低い</td>
+          <td>考える力もインフラも全般的に支援が必要な状態</td>
+          <td>包括的な環境調整・段階的な習熟支援が必要</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">
+    特に支援の現場で重要なのは <strong>GAI &gt; CPI のパターン</strong>です。
+    「頭は良いはずなのに、なぜか作業が遅い／うっかりミスが多い／覚えていられない」と本人や周囲が感じる時、
+    このギャップが背景にあることが少なくありません。
+    本人の自己評価と作業成績が乖離して、本人が「自分は怠けている」「能力がない」と誤って自己否定するきっかけにもなります。
+    GAI と CPI の差を読むことは、こうした誤った自己理解を解きほぐすための重要な情報源です。
+  </p>
+  <p class="reveal">
+    なお、GAI と CPI は日本版でも算出可能ですが、所見書に必ず記載されているとは限りません。
+    必要があれば、検査を実施した心理職に算出を依頼することができます。
+    所見書を依頼する際に「GAI と CPI の算出と、両者の差の解釈もお願いします」と伝えておくと、より厚みのある情報が得られます。
+  </p>
+
+  <blockquote class="pull-quote reveal">
+    プロフィール分析は、本人の困難の輪郭を描く道具であって、
+    診断ラベルを貼るためのスキャナーではない。
+  </blockquote>
+</section>
+
+<!-- ========== 06 CRITICAL: できないこと ========== -->
+<section class="critical-section" id="ch07">
+  <div class="chapter">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">07</div>
+    <div>
+      <div class="chapter-kicker">Hard Limits</div>
+      <div class="chapter-title">WAIS-IV が「できないこと」<br>— 一番大切な章</div>
+    </div>
+  </div>
+
+  <p class="lead reveal">
+    WAIS-IV は強力な検査です。しかし「強力さ」と「万能性」は違います。
+    現場で起きる多くの誤用は、できないことを「できる」と勘違いしているところから始まります。
+    ここでは、エビデンスに基づいて、6つの「できないこと」をはっきりさせます。
+  </p>
+
+  <div class="limitation-block reveal">
+    <div class="lim-num">i.</div>
+    <h3>WAIS-IV 単独では、どの障害も「診断」できない</h3>
+    <p>知的能力障害（IDD）、ASD、ADHD、限局性学習症――どれも、WAIS-IV のスコアだけでは診断できません。
+      診断は、DSM-5-TR / ICD-11 の臨床基準にもとづき、複数の情報源（生育歴、行動観察、他の検査、機能評価）を統合して、医師が下すものです。
+      WAIS-IV はその「複数の情報源のうちの一つ」でしかありません。</p>
+  </div>
+
+  <div class="limitation-block reveal">
+    <div class="lim-num">ii.</div>
+    <h3>「ASDのプロフィール」「ADHDのプロフィール」は、診断目的には使えない</h3>
+    <p>「言語＞動作」「PSIが低いのはASD」「WMIが低いのはADHD」――
+      これらの俗説は、現場でもまだ広く語られています。しかし大規模なメタ分析は、診断目的でこれらを使うことの妥当性を否定しています。</p>
+    <div class="evidence-note">
+      Wilson (2024) は、WAIS-IV / WISC-V を用いた18研究・1,800名超のメタ分析で次のように報告しました。
+      自閉症成人では PSI のみが平均から <strong>13.3点低い</strong>（大きな効果量、p &lt; .001）一方で、
+      VCI、PRI、WMI は標準的な平均範囲にとどまりました。
+      ADHD成人では WMI が平均より <strong>4.8点低い</strong> のみで、効果量は小さく、他の指標は平均範囲でした。
+      著者の結論は次の通りです——
+      <strong>「Wechsler検査のパフォーマンスのパターンは、診断目的に使うには感度も特異度も不十分である」</strong>。
+      また、メタ分析対象群の I² 値（異質性指標）は神経多様群の指標で <strong>53.7%〜88.8%</strong>（自閉症成人）、
+      <strong>7.5%〜70.4%</strong>（ADHD成人、FRIを統制した値）と幅があり、「同じ診断名でも個人差が大きい」ことが示されています。<br>
+      <a href="https://doi.org/10.1093/arclin/acad073" target="_blank" rel="noopener">出典：Wilson, A. C. (2024). Archives of Clinical Neuropsychology, 39(4), 498–515.</a>
+    </div>
+    <p style="margin-top: 24px;">
+      つまり、自閉症成人で PSI が低い傾向そのものは確認されています。
+      しかし、それを <strong>診断スクリーニングとして使う</strong>こと（PSIが低い→ASDかもしれない、と読むこと）は、感度・特異度ともに不十分です。
+      WAIS-IV のプロフィールは、診断装置ではなく、その人個別の認知特性を理解するための情報源として読むべきものです。
+    </p>
+  </div>
+
+  <div class="limitation-block reveal">
+    <div class="lim-num">iii.</div>
+    <h3>下位検査レベルの解釈は、信頼性が足りない</h3>
+    <p>「類似と単語の差が大きいから、抽象的推理は得意だが言語知識は乏しい」――
+      個別の下位検査同士の比較で結論を出すのは、技術的に危ういことです。</p>
+    <div class="evidence-note">
+      WAIS-IV の標準化サンプルにおいて、下位検査ディスクレパンシー得点の信頼性は<strong>.55〜.88</strong>。
+      これは、臨床判断に必要とされる .90 という基準を下回ります（Glass, Ryan, & Charter, 2010 の指摘）。
+      指標間ディスクレパンシーの信頼性は .80〜.91 とまだましですが、下位検査同士の差はさらに不安定です。
+      Watkins、Canivez らの一連の研究も、下位検査プロフィール解釈の臨床的妥当性に強い疑問を投げかけています。
+    </div>
+  </div>
+
+  <div class="limitation-block reveal">
+    <div class="lim-num">iv.</div>
+    <h3>IQは固定された個人の特性ではない</h3>
+    <p>知能検査の点数は、その日のコンディション、教育機会、文化的背景、検査者との関係性、テスト経験などに左右されます。
+      数ヶ月の介入、環境改善、心身の回復で、指標は明確に動くことがあります。
+      「IQ X だから、この人の能力はそこまで」という固定的な見方は、本人の可能性を狭めるだけでなく、事実としても誤りです。</p>
+    <p style="margin-top: 16px;">同様に、社会全体の平均IQも世代を超えて上昇してきたことが知られており（フリン効果）、
+      検査は定期的に標準化のやり直しが行われています。
+      これは知能が「測られる対象」というより「測り方によって相対的に現れるもの」であることを示しています。</p>
+  </div>
+
+  <div class="limitation-block reveal">
+    <div class="lim-num">v.</div>
+    <h3>就労成否を予測する道具ではない</h3>
+    <p>認知能力スコアと職務遂行成績の間には、集団レベルで中程度の相関があることが知られています。
+      しかしこれは「平均的な傾向」であって、個人レベルの予測精度は高くありません。
+      同じFSIQの人が、職務適性、職場文化、上司との相性、配慮の有無で、まったく異なる就労継続率を示します。</p>
+    <p style="margin-top: 16px;"><strong>WAIS-IVは「働けるか／働けないか」のテストではありません</strong>。
+      「どんな環境で、どんな支援があれば、本人の力が発揮されるか」を考えるための情報源です。
+      この前提を取り違えると、検査が本人の可能性を制限する装置になってしまいます。</p>
+  </div>
+
+  <div class="limitation-block reveal">
+    <div class="lim-num">vi.</div>
+    <h3>測れていないものが、実は多い</h3>
+    <p>WAIS-IV が測るのは、「言語的知識・推理」「視覚的推理」「ワーキングメモリー」「処理速度」の4側面です。
+      しかし人が働き、生活し、人と関わる上で大事なものの多くは、ここに入っていません。</p>
+    <p>たとえば――<strong>動機づけ、忍耐、感情調整、対人スキル、創造性、実用知（その状況で何が大事かを察知する力）、社会的判断、共感性、自己理解</strong>。
+      これらは WAIS-IV では測れません。
+      にもかかわらず、就労継続のしやすさは、こうした「測れていないもの」に大きく依存します。</p>
+    <p style="margin-top: 16px;">WAIS-IV の結果を、本人の総合的な「能力」と読まないでください。
+      それはあくまで認知の一断面です。</p>
+  </div>
+
+  <blockquote class="pull-quote reveal">
+    WAIS-IV は <em>能力</em> を測る検査ではない。<br>
+    特定の条件下で、特定の種類の認知パフォーマンスを推定する検査である。
+    <span class="attrib">この区別を見失わないことが、検査を支援に役立てる第一条件です。</span>
+  </blockquote>
+  </div>
+</section>
+
+<!-- ========== 07 点数を歪めるもの ========== -->
+<section class="chapter" id="ch08">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">08</div>
+    <div>
+      <div class="chapter-kicker">Confounders</div>
+      <div class="chapter-title">点数を歪める、現実の要因たち</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    結果票の数字は、本人の「素の能力」をきれいに切り出したものではありません。
+    検査の当日、本人がどんな状態だったか――それがそのまま数字に反映されます。
+    支援者として結果を読む時、これらの要因を抜きに点数だけ見ることはできません。
+  </p>
+
+  <div class="distortion-grid">
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9 14s1 1.5 3 1.5 3-1.5 3-1.5"/><circle cx="9" cy="10" r="0.5" fill="currentColor"/><circle cx="15" cy="10" r="0.5" fill="currentColor"/></svg>
+      </div>
+      <h4>抑うつ・不安</h4>
+      <p>処理速度（PSI）とワーキングメモリー（WMI）が選択的に低下しやすい。
+        集中・速度・思考の機動性が落ちるため。
+        症状が落ち着いた後の再検査で大きく回復する例がしばしばあります。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <h4>疲労・睡眠不足</h4>
+      <p>長時間検査（標準で60〜90分）。前夜の睡眠、当日の疲労状態、空腹状態が成績を左右します。
+        高齢者や慢性疾患のある方では、特に検査負荷が大きくなります。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="3" width="8" height="6" rx="2"/><path d="M12 9v6M9 15h6M9 21h6"/></svg>
+      </div>
+      <h4>薬剤の影響</h4>
+      <p>抗精神病薬、ベンゾジアゼピン系、一部の抗うつ薬、抗けいれん薬などは、
+        処理速度や注意・記憶に影響します。
+        服薬状況を確認せずに点数を解釈することはできません。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="8"/></svg>
+      </div>
+      <h4>検査経験・練習効果</h4>
+      <p>同じ検査を短期間で繰り返すと、WAIS-IVの平均で総合点は数点上昇します。
+        標準化マニュアルでは、再検査の間隔は最低でも数ヶ月、できれば1年以上を推奨。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v4h-4"/></svg>
+      </div>
+      <h4>動機づけ・検査への姿勢</h4>
+      <p>「うまくやりたい」気持ちが強すぎても、低すぎても歪みが出ます。
+        診断を望んでいない、検査者を信用できない、検査の意義を理解していない――
+        こうした状態では、本来の力が出ないのが当然です。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </div>
+      <h4>教育機会・文化的背景</h4>
+      <p>言語理解（VCI）の下位検査「知識」「単語」は、学校教育や読書経験に強く依存します。
+        日本語が第一言語でない方、不登校歴のある方、学習機会に恵まれなかった方では、
+        VCI の低さを「能力」と読むのは公正ではありません。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L4 7v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>
+      </div>
+      <h4>感覚・運動機能</h4>
+      <p>視力低下、難聴、上肢の運動制限がある方では、特に処理速度や知覚推理の検査で
+        実際の認知能力以下のスコアが出ることがあります。
+        検査前後にこれらの状態を確認することが必要です。</p>
+    </div>
+    <div class="distortion-item reveal">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12l4-4M5 12l4 4M19 12l-4-4M19 12l-4 4"/></svg>
+      </div>
+      <h4>検査者との関係性</h4>
+      <p>ラポール（信頼関係）の質も結果に影響します。
+        緊張の強い方、人見知りのある方、過去に検査で嫌な思いをした方では、
+        最初の数題で本来の力が出ない、ということがあります。</p>
+    </div>
+  </div>
+
+  <p class="reveal">
+    結果票を見た時の最初の問いは「点数はいくつか」ではなく、
+    <strong>「この検査が行われた時、本人はどんな状態だったか」</strong>です。
+    所見書に書かれている「検査時の様子」「指示の理解」「検査態度」の記述には、
+    数字以上の情報が含まれていることがよくあります。
+  </p>
+</section>
+
+<!-- ========== 09 特殊な解釈場面 ========== -->
+<section class="chapter" id="ch09">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">09</div>
+    <div>
+      <div class="chapter-kicker">Edge Cases</div>
+      <div class="chapter-title">特殊な解釈場面 — 標準的な読み方が通用しない時</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    WAIS-IVは平均的な成人を念頭に標準化されています。
+    そのため、検査される人の状況によっては、これまで述べた標準的な読み方が機能しなくなる場面があります。
+    現場でよく出会う5つの「特殊な解釈場面」を整理します。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 48px 0 16px;" class="reveal">床効果と天井効果 — 数字の弁別力が落ちる範囲</h3>
+
+  <div class="compare-grid">
+    <div class="compare-cell stat reveal">
+      <div class="head">床効果 (Floor Effect)</div>
+      <h3>FSIQ 55–65 の範囲</h3>
+      <p>WAIS-IVのスコアは、おおむね FSIQ 40–45 が下限値とされています。
+        この下限近くでは、下位検査の素点が <strong>0 点や 1 点に多くの人が集中</strong>するため、
+        本人の能力差が点数に反映されにくくなります。
+        「FSIQ 50」と「FSIQ 45」の人を、検査の数字だけでは区別できないことが起こります。</p>
+      <p>こうした範囲の方を評価する時は、適応行動評価尺度（Vineland-II など）や、
+        生活機能の観察評価を併用することが標準的です。
+        知的能力障害の重症度判定でも、DSM-5-TR や ICD-11 では「IQ よりも適応機能を重視する」方向に変わってきています。</p>
+    </div>
+    <div class="compare-cell freq reveal">
+      <div class="head">天井効果 (Ceiling Effect)</div>
+      <h3>FSIQ 130 以上の範囲</h3>
+      <p>反対に、FSIQ が極めて高い範囲では、満点近くの下位検査が多くなり、
+        やはり<strong>個人差が数字に反映されにくく</strong>なります。
+        ギフテッド領域の評価には WAIS-IV だけでは限界があり、
+        SB5（スタンフォード・ビネー第5版）など天井の高い検査の補完が推奨されます。</p>
+      <p>就労移行支援の現場では稀ですが、「ギフテッド・困難併存」（いわゆる 2E）の方では、
+        VCIやPRIが高く出る一方で WMIやPSIが平均的、というプロフィールが出ることがあり、
+        本人にとっての主観的な困難と、検査の数字が乖離することがあります。</p>
+    </div>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">日本語が第一言語でない方</h3>
+  <p class="reveal">
+    WAIS-IVの日本版は、日本語で標準化されています。
+    第一言語が日本語でない方の場合、特に <strong>言語理解（VCI）と、教示を聴いて理解する必要があるWMI</strong> で、
+    認知能力ではなく言語スキルが反映された低めの点数が出ることが起こります。
+  </p>
+
+  <div class="critique-block reveal">
+    <h4>判断の指針</h4>
+    <p>
+      日本語学習歴が10年未満、または日常会話は流暢でも抽象的な日本語に困難がある方の場合：
+    </p>
+    <ul style="list-style:none; padding-left: 0; margin: 12px 0;">
+      <li style="padding: 6px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        VCI の低さを「知的能力の低さ」と読まない。「日本語での言語的概念形成の現状値」と読む。
+      </li>
+      <li style="padding: 6px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        PRI（特に行列推理、パズル）は言語の影響を受けにくいため、本人の推論能力の参考としてはこちらに重みを置く。
+      </li>
+      <li style="padding: 6px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        可能であれば、本人の母語話者の心理士による評価や、母語版の知能検査が望ましい。
+      </li>
+      <li style="padding: 6px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        Raven 漸進的マトリックスなど、言語的負荷の少ない非言語性知能検査を補完的に検討する。
+      </li>
+    </ul>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">感覚・運動機能に制限のある方</h3>
+  <p class="reveal">
+    第08章で触れた内容を、ここでより具体的に整理します。
+    WAIS-IVは視覚、聴覚、手の運動機能を前提とした下位検査が多く含まれます。
+    これらに制限がある方では、認知能力の低さではなく、入出力の制限が点数に反映されることがあります。
+  </p>
+
+  <table class="class-table reveal">
+    <thead>
+      <tr>
+        <th>機能制限</th>
+        <th>影響を受けやすい下位検査</th>
+        <th>解釈の指針</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>視力低下</td>
+        <td>積木模様、行列推理、パズル、絵の完成、記号探し、符号、絵の抹消</td>
+        <td>PRI と PSI の低さを認知能力と直結させない。眼鏡・拡大などの配慮が確実に行われたか確認。</td>
+      </tr>
+      <tr>
+        <td>難聴・聴覚処理障害</td>
+        <td>類似、単語、知識、理解、数唱、算数、語音整列</td>
+        <td>VCI と WMI の低さは、聴覚的指示の理解の問題が混入しているかもしれない。検査時の補聴器使用や、指示の繰り返しの記録を確認。</td>
+      </tr>
+      <tr>
+        <td>上肢の運動制限</td>
+        <td>積木模様、パズル、記号探し、符号、絵の抹消</td>
+        <td>PSI と PRI 一部の低さは、認知能力ではなく筆記・操作速度の制限を反映している可能性。所見書で運動時間ロスの記述を確認。</td>
+      </tr>
+      <tr>
+        <td>失語症・高次脳機能障害</td>
+        <td>多くの下位検査に広く影響</td>
+        <td>WAIS-IV は脳損傷後の包括的評価には不向き。神経心理学的バッテリー（WMS-IV、BADSなど）の補完が必要。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">認知症スクリーニングとの位置づけ — HDS-R、MMSE との違い</h3>
+
+  <p class="reveal">
+    高齢のご利用者で「もしかして認知症？」という疑問が出た場面で、
+    HDS-R や MMSE といった検査名を耳にすることがあります。
+    これらと WAIS-IV はそれぞれ別の目的を持つ検査で、混同すると判断を誤ります。
+  </p>
+
+  <div class="chc-matrix reveal">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 22%;">検査</th>
+          <th style="width: 25%;">何を測るか</th>
+          <th style="width: 18%;">所要時間</th>
+          <th>判定の方向性</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="wais-cell">HDS-R<br>改訂長谷川式</td>
+          <td>認知症スクリーニング<br>（記憶・見当識・計算など）</td>
+          <td>6–10分</td>
+          <td>30点満点中 <strong>20点以下で認知症疑い</strong>（感度93%、特異度86%）。スクリーニングであり診断ではない。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">MMSE<br>ミニメンタル<br>ステート</td>
+          <td>認知症スクリーニング<br>（記憶・計算・図形模写など）</td>
+          <td>10–15分</td>
+          <td>30点満点中 <strong>23点以下で認知症疑い</strong>、27点以下でMCI（軽度認知障害）疑い。図形模写があり書字が必要。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">WAIS-IV</td>
+          <td>知能の包括的評価<br>（4指標 + FSIQ）</td>
+          <td>60–90分</td>
+          <td>カットオフ値で「ある／なし」を判定する検査ではない。包括的な認知プロファイルを描く検査。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">
+    つまり、HDS-R と MMSE は<strong>認知症の有無を「ふるい分ける」検査</strong>であり、
+    WAIS-IV は<strong>その人の認知能力の構造を「描き出す」検査</strong>です。
+    高齢者で「最近物忘れがひどい」「業務についていけない」という訴えがある場合、
+    まずは医療機関で HDS-R や MMSE による認知症スクリーニング、必要に応じて画像検査が行われ、
+    そこで認知症が疑われない時、より詳細な認知プロファイルを得る目的で WAIS-IV を実施するという順番が一般的です。
+  </p>
+  <p class="reveal">
+    また、若年（16–65歳）のご利用者で WAIS-IV を受けている方に、
+    HDS-R や MMSE を追加で実施する必要は通常ありません。
+    これらは認知機能の急性的な低下や認知症を疑う場面で使われる検査です。
+    所見書の中に HDS-R や MMSE の結果が併記されている場合、
+    検査者がなぜそれを実施したのか（認知症の鑑別、高次脳機能障害の評価など）の背景を読み取ることが、所見の理解に役立ちます。
+  </p>
+
+  <blockquote class="pull-quote reveal">
+    検査は、ひとつひとつ「何のために、何を測る」かが違う。<br>
+    検査名だけで「ああIQの検査ね」と一括りにしないことが、所見書を読む基本姿勢になります。
+  </blockquote>
+</section>
+
+<!-- ========== 08 結果→支援への翻訳 ========== -->
+<section class="chapter" id="ch10">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">10</div>
+    <div>
+      <div class="chapter-kicker">From Numbers to Support</div>
+      <div class="chapter-title">結果を、実際の支援設計に翻訳する</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    WAIS-IVの結果を就労移行で使う本当の目的は、診断ラベルでもなく、評価でもありません。
+    本人の認知特性に合わせて、訓練内容や環境を調整するための仮説を立てることです。
+    ここでは、典型的な4つの指標パターンを例に、具体的な支援設計の方向性を示します。
+  </p>
+
+  <div class="case-card reveal">
+    <div class="case-title">Case 1：WMI が他の指標より明らかに低い方</div>
+    <div class="score-row">
+      <div class="score-pill"><div class="lbl">VCI</div><div class="val">108</div><div class="ci">CI 102–113</div></div>
+      <div class="score-pill"><div class="lbl">PRI</div><div class="val">103</div><div class="ci">CI 96–109</div></div>
+      <div class="score-pill" style="background: var(--terracotta-soft); border-color: var(--terracotta);"><div class="lbl">WMI</div><div class="val">82</div><div class="ci">CI 76–90</div></div>
+      <div class="score-pill"><div class="lbl">PSI</div><div class="val">98</div><div class="ci">CI 90–106</div></div>
+    </div>
+    <div class="interpretation">
+      <h5>このプロフィールから立てる仮説</h5>
+      <p>頭の中に情報を保持しながら同時に作業することが、相対的に大きな負荷となる可能性。
+        言語的・視覚的に「考える力」は平均以上にあるため、
+        「考える力はあるのに、覚えながら考えると追いつかない」というギャップが本人にとって苦しい場面が想定されます。</p>
+
+      <h5>訓練・環境調整の方向性</h5>
+      <ul class="accommodation-list">
+        <li>口頭の連続指示を避け、ホワイトボード／文書／チャットで指示を可視化する</li>
+        <li>マルチタスクではなく、一つずつ完了させて次へ進む形にタスクを構造化する</li>
+        <li>会議や打ち合わせで、その場のメモが追いつかないなら、録音や議事録の共有を前提にする</li>
+        <li>暗算が必要な業務（金銭授受、在庫確認など）には電卓・表計算の使用を組み込む</li>
+        <li>本人にも「忘れっぽさは性格や努力不足ではない」ことを丁寧に伝え、外部記憶の活用を一緒に練習する</li>
+      </ul>
+      <div class="case-warning">この読みはあくまで仮説です。WMIが低い理由は、ADHDも、抑うつも、不安も、薬剤も、不眠も、多くがあり得ます。
+        プロフィールから診断を逆算しないこと。実際の生活場面での困難の現れ方と照らし合わせて検証してください。</div>
+    </div>
+  </div>
+
+  <div class="case-card reveal">
+    <div class="case-title">Case 2：PSI が顕著に低い方</div>
+    <div class="score-row">
+      <div class="score-pill"><div class="lbl">VCI</div><div class="val">112</div><div class="ci">CI 106–117</div></div>
+      <div class="score-pill"><div class="lbl">PRI</div><div class="val">109</div><div class="ci">CI 102–115</div></div>
+      <div class="score-pill"><div class="lbl">WMI</div><div class="val">102</div><div class="ci">CI 95–109</div></div>
+      <div class="score-pill" style="background: var(--terracotta-soft); border-color: var(--terracotta);"><div class="lbl">PSI</div><div class="val">78</div><div class="ci">CI 71–87</div></div>
+    </div>
+    <div class="interpretation">
+      <h5>このプロフィールから立てる仮説</h5>
+      <p>速く・正確に・反復的な作業を行うことが、本人にとって大きな疲労源になる可能性。
+        本人は「ちゃんとやろうとすると遅くなる」「速くやろうとすると間違える」というジレンマを抱えていることが多くあります。
+        VCIとPRIが平均以上なので、「考えること」自体は得意。だからこそ「速さを求められる単純作業」とのミスマッチが顕著になりがちです。</p>
+
+      <h5>訓練・環境調整の方向性</h5>
+      <ul class="accommodation-list">
+        <li>スピード重視のピッキング・入力作業ではなく、考える時間が確保される業務（企画補助、調査、検討、対人援助、編集系）への適性を一緒に探る</li>
+        <li>業務の所要時間を本人が把握できるよう、ストップウォッチではなくセルフタイマー（「次の30分はこれをやる」式）を導入する</li>
+        <li>納期や速度のフィードバックは「他者比較」ではなく「先週の自分との比較」で伝える</li>
+        <li>処理速度の低さは加齢、抑うつ、薬剤の影響もあり得るため、医療連携で評価を共有する</li>
+        <li>「遅い」のではなく「丁寧に処理している」というリフレーミングを、本人にも周囲にも伝える</li>
+      </ul>
+      <div class="case-warning">PSIの低さだけで「ASDかもしれない」と判断しないでください。
+        Wilson (2024) のメタ分析の通り、PSIの低下は感度も特異度も診断目的には不十分です。
+        生育歴と日常の困りごとを聞き取ることが、診断より大事です。</div>
+    </div>
+  </div>
+
+  <div class="case-card reveal">
+    <div class="case-title">Case 3：VCI と PRI に大きな差がある方（言語＞動作）</div>
+    <div class="score-row">
+      <div class="score-pill" style="background: var(--teal-soft); border-color: var(--teal);"><div class="lbl">VCI</div><div class="val">118</div><div class="ci">CI 112–123</div></div>
+      <div class="score-pill" style="background: var(--terracotta-soft); border-color: var(--terracotta);"><div class="lbl">PRI</div><div class="val">88</div><div class="ci">CI 81–96</div></div>
+      <div class="score-pill"><div class="lbl">WMI</div><div class="val">105</div><div class="ci">CI 98–112</div></div>
+      <div class="score-pill"><div class="lbl">PSI</div><div class="val">95</div><div class="ci">CI 87–103</div></div>
+    </div>
+    <div class="interpretation">
+      <h5>このプロフィールから立てる仮説</h5>
+      <p>VCI−PRI の差が30点（2SD相当）にもなるため、第06章の解釈ルールに照らせば <strong>FSIQ も GAI も「総合的な力」を一つの数字で代表させるには無理がある</strong>状態です。
+        FSIQ の数字を見て「平均的なので問題ない」と読むのは、この方の場合は誤りです。
+        言語的に概念を扱う力は強いが、視覚的・空間的に「目で見て」考えることが相対的に難しい可能性が見えています。
+        実際の生活では、図表・地図・フローチャート・機器操作などで戸惑うことが多く、本人がそれを言語化しづらいことがあります。</p>
+
+      <h5>訓練・環境調整の方向性</h5>
+      <ul class="accommodation-list">
+        <li>図解より文章での説明を主軸にする。フローチャートは補助として、必ず文章説明と併用する</li>
+        <li>新しい機器・ソフト・場所への慣れに時間がかかることを前提として、慣熟期間を確保する</li>
+        <li>本人の言語的な得意さを活かす業務（説明文作成、議事録、文書作成、対人援助）と結びつける</li>
+        <li>「説明はできるのに実際にやると違う」というギャップを叱責せず、視覚的処理の苦手さとして理解する</li>
+      </ul>
+      <div class="case-warning">逆パターン（PRI ≫ VCI）も同様に重要です。
+        この場合は「ことばで説明されると混乱するが、見せれば分かる」傾向となり、視覚的な業務指示が支援の鍵になります。
+        ただし、これらのパターンを「ASD らしい」「LDらしい」と読むのは飛躍です。あくまで本人の認知特性として読みましょう。</div>
+    </div>
+  </div>
+
+  <div class="case-card reveal">
+    <div class="case-title">Case 4：4指標がすべて低めで、ほぼ均一</div>
+    <div class="score-row">
+      <div class="score-pill"><div class="lbl">VCI</div><div class="val">75</div><div class="ci">CI 70–82</div></div>
+      <div class="score-pill"><div class="lbl">PRI</div><div class="val">78</div><div class="ci">CI 72–86</div></div>
+      <div class="score-pill"><div class="lbl">WMI</div><div class="val">73</div><div class="ci">CI 68–81</div></div>
+      <div class="score-pill"><div class="lbl">PSI</div><div class="val">76</div><div class="ci">CI 70–85</div></div>
+    </div>
+    <div class="interpretation">
+      <h5>このプロフィールから立てる仮説</h5>
+      <p>FSIQ も全指標も「低い」域に収まっている場合、全般的な認知処理に支援が必要な状態であることが想定されます。
+        ただしここで重要なのは、「低い数字」を本人の限界として読まないことです。
+        WAIS-IVは「現時点でのパフォーマンス推定値」であり、適切な支援と環境調整によって、
+        本人の生活機能（実際にできること）は数字以上に伸びます。</p>
+
+      <h5>訓練・環境調整の方向性</h5>
+      <ul class="accommodation-list">
+        <li>具体的な作業手順は、ことばだけでなく、図・写真・実演を組み合わせて伝える</li>
+        <li>新しい業務は、小さなステップに分解して、一つずつ習熟してから次へ進む</li>
+        <li>本人が「できた」体験を積めるよう、初期の難易度は意図的に下げる</li>
+        <li>定型的な業務、繰り返しの多い業務との相性は良いことが多い</li>
+        <li>本人の興味関心・対人関係の強み・粘り強さなど、検査では測れていない側面を丁寧に評価する</li>
+        <li>必要に応じて、療育手帳・障害基礎年金などの制度活用も視野に入れる</li>
+      </ul>
+      <div class="case-warning">「FSIQが低い人は働けない」という前提を持たないでください。
+        実際の就労継続には、認知能力以上に、職務の選択、職場文化、配慮の質、本人の動機が大きく影響します。
+        WAIS-IVの数字は「制限」ではなく「設計のための情報」として読みましょう。</div>
+    </div>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">支援設計のときの基本姿勢</h3>
+  <div class="do-dont">
+    <div class="do-col reveal">
+      <h4>こう使う</h4>
+      <ul>
+        <li>結果を「仮説」として扱い、日常の観察と照らし合わせて検証する</li>
+        <li>強み（PS）を業務に活かす方法を、本人と一緒に考える</li>
+        <li>苦手な領域は、訓練でなく環境調整で補う発想を優先する</li>
+        <li>所見書全体（行動観察、検査時の様子）を読み、数字以外の情報を拾う</li>
+        <li>検査結果を、本人と支援者の対話の素材として共有する</li>
+      </ul>
+    </div>
+    <div class="dont-col reveal">
+      <h4>こう使ってはいけない</h4>
+      <ul>
+        <li>数字だけで「働ける／働けない」を判断する</li>
+        <li>プロフィールから診断名を推測する</li>
+        <li>低い指標を本人の「限界」として固定する</li>
+        <li>本人に「あなたはIQ Xです」とピンポイントで告げる</li>
+        <li>結果を本人の同意なく他者（家族、企業）に共有する</li>
+        <li>一度の検査結果を、長年にわたって参照し続ける</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 11 制度・支援計画との接続 ========== -->
+<section class="chapter" id="ch11">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">11</div>
+    <div>
+      <div class="chapter-kicker">Institutional Bridges</div>
+      <div class="chapter-title">制度・支援計画との接続 — 検査結果を実務に橋渡しする</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    WAIS-IVの結果は、個別支援計画、合理的配慮の根拠、療育手帳の判定、障害基礎年金の認定、雇用主との連携など、
+    さまざまな制度的・実務的な場面で参照されます。
+    検査結果がどのように制度と接続しているのかを理解すると、所見書の読み方も、本人への説明の仕方も変わってきます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 48px 0 16px;" class="reveal">療育手帳の判定基準 — 自治体間で異なるという現実</h3>
+  <p class="reveal">
+    療育手帳は、知的障害があると判定された方が継続的な支援を受けるための証明書です。
+    根拠は1973年の厚生省事務次官通知（厚生省発児第156号）「療育手帳制度について」ですが、
+    現在の運用は<strong>各都道府県・指定都市が独自に要綱を定めて行っています</strong>。
+    そのため、自治体間で判定基準にばらつきがあります。
+  </p>
+
+  <div class="critique-block reveal">
+    <h4>判定基準の主な目安（参考値・地域差あり）</h4>
+    <ul style="list-style:none; padding-left: 0; margin: 12px 0;">
+      <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85; border-bottom: 1px dashed var(--line-soft);">
+        <span style="position:absolute; left:0; color: var(--terracotta); font-family:'Cormorant Garamond', serif; font-style:italic;">A</span>
+        <strong>重度</strong>：おおむね IQ 35 以下（自治体により 50 以下、または他の障害との重複で A判定となる場合あり）
+      </li>
+      <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85; border-bottom: 1px dashed var(--line-soft);">
+        <span style="position:absolute; left:0; color: var(--terracotta); font-family:'Cormorant Garamond', serif; font-style:italic;">B</span>
+        <strong>その他（中度・軽度）</strong>：A以外の知的障害。多くの自治体で交付基準は <strong>IQ 70–75 以下</strong>。
+      </li>
+    </ul>
+    <p>
+      自治体によっては独自にB1（中度）／B2（軽度）に細分化したり、東京都のように1度（最重度）〜4度（軽度）の4段階で運用したりしています。
+      令和2〜3年度の厚生労働科学研究費補助金研究（辻井正次班）が、判定基準の全国統一化を目指す検討を行っており、
+      ICD-11の知的発達症の診断基準への整合性も視野に入っています。
+    </p>
+  </div>
+
+  <p class="reveal">
+    現場で大事な観点として、療育手帳の判定は<strong>IQの数値だけでなく、適応行動評価も含めて総合的に判断される</strong>ことです。
+    Vineland-II 適応行動尺度や S-M社会生活能力検査が併用されることがあります。
+    また、判定の根拠は WAIS-IV だけでなく、田中ビネー知能検査V や K-ABC が用いられることもあります。
+    所見書のFSIQが「微妙な位置」にある時、適応行動の評価結果が判定を左右することがあるため、生活機能の観察情報を心理職と共有することが価値を持ちます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">障害基礎年金 — 知的障害の認定</h3>
+  <p class="reveal">
+    知的障害は、初診日が20歳前と扱われるため、20歳の誕生日の翌月から障害基礎年金の対象となり得ます。
+    認定は <strong>1級</strong>（日常生活に常時援助が必要な程度）と <strong>2級</strong>（日常生活に著しい制限を受ける程度）に分かれ、
+    医師による診断書（年金診断書）と、本人・家族による「病歴・就労状況等申立書」をもとに、日本年金機構が認定します。
+  </p>
+  <p class="reveal">
+    認定で重要なのは、<strong>IQの数値そのものではなく、日常生活能力の評価です</strong>。
+    国民年金・厚生年金保険障害認定基準でも「知的障害の認定に当たっては、知能指数のみに着眼することなく、
+    日常生活のさまざまな場面における援助の必要度を勘案して総合的に判断する」と明記されています。
+    2016年9月から適用されている「精神の障害に係る等級判定ガイドライン」では、
+    「日常生活能力の判定」（7項目の平均値）と「日常生活能力の程度」（5段階）の組み合わせが等級判定の目安として用いられます。
+  </p>
+  <p class="reveal">
+    かつての慣行的目安として「1級 ≒ IQ 20以下／2級 ≒ IQ 35以下」と語られることはありますが、
+    これは現在の認定基準が示す要件ではありません。
+    現実の認定では、同じIQでも、本人の食事・身辺の清潔保持・金銭管理・通院・買い物・人付き合い・身辺の安全保持などの実際の遂行度合いによって、等級判定が大きく変わります。
+  </p>
+  <p class="reveal">
+    支援者として知っておきたいのは、診断書を書く医師は、就労移行で見えている生活機能の情報を持っていないことが多いということです。
+    日常の様子（金銭管理、対人関係、新しい環境への適応など）の観察記録を、本人の同意のもとで医師と共有することが、適切な認定につながる場合があります。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">障害者雇用率と就労移行の位置づけ</h3>
+
+  <p class="reveal">
+    障害者雇用促進法に基づく民間企業の法定雇用率は、
+    <strong>2024年4月から 2.5%</strong>、<strong>2026年7月から 2.7%</strong> へ段階的に引き上げられています。
+    対象事業主の範囲も、2024年から従業員40人以上、2026年7月からは37.5人以上へと拡大されました。
+  </p>
+
+  <div class="critique-block reveal">
+    <h4>WAIS-IV の結果が雇用に関わる場面</h4>
+    <p>
+      就労移行支援から一般就労につなぐ際、WAIS-IV の結果が以下の形で雇用に影響することがあります。
+    </p>
+    <ul style="list-style:none; padding-left: 0; margin: 12px 0;">
+      <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        <strong>合理的配慮の根拠</strong>：雇用主が配慮（業務指示の文書化、休憩取得の柔軟性、業務量の調整など）を提供する際、検査結果がその根拠の一つになる。
+      </li>
+      <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        <strong>業務マッチング</strong>：本人の認知特性に合った業務内容・職場環境を選ぶための情報源として活用される。
+      </li>
+      <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size:14px; line-height:1.85;">
+        <span style="position:absolute; left:0; color: var(--terracotta);">→</span>
+        <strong>採用判断のリスク</strong>：本人の同意なく検査結果が雇用主に伝わると、採用判断にバイアスが生じる懸念がある。
+        企業へ伝える情報は、本人の同意のもと、IQの数値ではなく <strong>「視覚的な指示が伝わりやすい」「複数指示は混乱しやすい」</strong> といった機能のことばで伝えるのが原則です。
+      </li>
+    </ul>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">合理的配慮 — 障害者差別解消法と障害者雇用促進法</h3>
+  <p class="reveal">
+    2024年4月の改正により、<strong>事業者による合理的配慮の提供が法的義務になりました</strong>（障害者差別解消法）。
+    雇用の場面でも、障害者雇用促進法に基づき、合理的配慮の提供義務があります。
+    WAIS-IV の結果は、抽象的な「配慮が必要です」を、<strong>具体的な「どんな配慮が、なぜ必要か」</strong> に翻訳する素材になります。
+  </p>
+  <p class="reveal">
+    たとえば「WMI が低い」だけでは雇用主に伝わりにくいですが、
+    「複数の指示を同時に保持することが困難なので、口頭の連続指示よりホワイトボードや文書での指示が業務遂行を助けます」と翻訳すれば、
+    具体的な配慮の形が見えてきます。
+    検査結果を、こうした翻訳を経て雇用主に伝えていくのが、就労移行支援スタッフの重要な役割の一つです。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">他の評価ツールとの組み合わせ</h3>
+
+  <p class="reveal">
+    WAIS-IV は包括的な認知能力検査ですが、就労支援の文脈では、これだけで全てが見えるわけではありません。
+    異なる目的を持つ他のツールと組み合わせることで、本人像が立体的になります。
+  </p>
+
+  <div class="chc-matrix reveal">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">ツール</th>
+          <th style="width: 30%;">何を見るか</th>
+          <th>WAIS-IV との関係</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="wais-cell">GATB<br>厚生労働省編<br>一般職業適性検査</td>
+          <td>9種の職業適性能（知的、言語、数理、書記的知覚、空間判断、形態知覚、運動共応、指先の器用さ、手腕の器用さ）</td>
+          <td>WAIS-IVが認知能力の総合像を描くのに対し、GATBは作業能力・職業適性に特化。ハローワークで受検可能。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">VPI<br>職業興味検査</td>
+          <td>Holland 6類型（現実的・研究的・芸術的・社会的・企業的・慣習的）への興味</td>
+          <td>WAIS-IVが「何ができるか」、VPIは「何をしたいか」。能力と興味の両面で職業選択を考える基礎情報になる。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">Vineland-II<br>適応行動尺度</td>
+          <td>適応行動（コミュニケーション、日常生活、社会性、運動）</td>
+          <td>知能と並ぶ「知的能力障害」診断の二本柱。療育手帳の判定でも併用される。WAIS-IVが測れない実生活能力を補完。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">就労移行<br>支援評価表</td>
+          <td>職業準備性（健康、日常生活、対人関係、作業遂行、就労意欲）</td>
+          <td>事業所での観察を通じた評価。WAIS-IVの「点数」を、訓練場面での実際の機能と照らし合わせる役割。</td>
+        </tr>
+        <tr>
+          <td class="wais-cell">MWS<br>幕張ワーク<br>サンプル法</td>
+          <td>作業遂行能力（OA、事務、製造などの模擬作業）</td>
+          <td>WAIS-IVのPSIや WMI が示す傾向を、実際の作業場面で具体的に確認できる。職業評価の標準的ツール。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">
+    つまり、WAIS-IVは<strong>「認知能力という一断面」</strong>を見るためのツールで、
+    そこに <strong>「作業能力（GATB、MWS）」「興味（VPI）」「適応行動（Vineland-II）」「実訓練場面での観察（評価表）」</strong> を重ねることで、
+    就労支援のための本人像が形成されます。
+    これらを組み合わせない単独使用は、WAIS-IVの強みも限界も増幅させてしまいます。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.3rem; margin: 56px 0 16px;" class="reveal">個別支援計画への落とし込み</h3>
+  <p class="reveal">
+    就労移行支援における個別支援計画は、本人のニーズと目標に基づいて作成されます。
+    WAIS-IVの結果は、目標設定の根拠ではなく、<strong>支援方法の選択の根拠</strong>として使うのが基本です。
+  </p>
+
+  <div class="do-dont">
+    <div class="do-col reveal">
+      <h4>個別支援計画への活かし方（適切な使用例）</h4>
+      <ul>
+        <li>「VCIが平均的なので、文書や口頭での説明を中心に支援」というように、本人の強みを活かす支援方法を選ぶ</li>
+        <li>「WMIが相対的に低いため、業務指示はチェックリスト形式で可視化する」というように、苦手を補う環境調整を計画する</li>
+        <li>「PSIが低めだが、考える時間がある業務では困難が出にくいため、企画補助系の訓練を中心に組み立てる」というように、訓練内容との適合を考える</li>
+      </ul>
+    </div>
+    <div class="dont-col reveal">
+      <h4>避けたい使い方</h4>
+      <ul>
+        <li>「FSIQが○○なので、目標を低く設定する」と本人の到達目標を検査結果で決めてしまう</li>
+        <li>WAIS-IVの結果だけで「一般就労は難しい」「B型施設が妥当」と進路を決める</li>
+        <li>本人と共有していない情報を、計画書の隠れた前提として使う</li>
+        <li>計画の見直しを行わず、最初の検査結果を長期間にわたって使い続ける</li>
+      </ul>
+    </div>
+  </div>
+
+  <blockquote class="pull-quote reveal">
+    検査結果は、本人の<em>可能性の天井</em>ではなく、<em>支援設計の道具</em>である。<br>
+    制度を使い、合理的配慮を引き出し、職場とつなぐための材料として、誠実に扱いたいものです。
+  </blockquote>
+</section>
+
+<!-- ========== 09 本人への伝え方 ========== -->
+<section class="chapter" id="ch12">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">12</div>
+    <div>
+      <div class="chapter-kicker">Communication & Ethics</div>
+      <div class="chapter-title">本人への伝え方と、結果共有の倫理</div>
+    </div>
+  </div>
+  <p class="lead reveal">
+    WAIS-IVの結果は、本人にとって、自分の認知についての重要な情報です。
+    しかし、伝え方を誤ると、自己評価の固定化、過剰な自己否定、あるいは過剰な自己診断（「私はXXに違いない」）を引き起こします。
+    伝え方には、技術と倫理の両方が要ります。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.2rem; margin: 32px 0 12px;" class="reveal">伝える前に確認したいこと</h3>
+  <p class="reveal">
+    まず、本人が結果を聞く準備ができているかを確認します。
+    検査を受けたばかりで、結果に対する不安や警戒が強い時期は、いきなり数字を伝えるのではなく、
+    「気になっていることは何か」「何を知りたかったのか」を先に聞きます。
+    本人の関心と結果の説明をつなげていくほうが、情報として受け取られやすくなります。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.2rem; margin: 32px 0 12px;" class="reveal">数字より「機能」のことばで話す</h3>
+  <p class="reveal">
+    「VCIは105、PSIは85です」と数字をそのまま伝えても、多くの人にとっては意味不明な記号にしかなりません。
+    また、点数を絶対的なラベルとして記憶されてしまうリスクもあります。
+    支援者として伝える時は、機能のことばに翻訳します。
+  </p>
+
+  <div style="background: var(--paper-deep); padding: 32px; margin: 24px 0; border-radius: 4px;" class="reveal">
+    <h4 style="font-family: 'Noto Serif JP', serif; font-size: 1rem; margin-bottom: 12px;">伝え方の例</h4>
+    <p style="font-size:14px; margin-bottom: 16px;">
+      <strong>避けたい</strong>：「あなたのIQは88です。WMIが特に低くて76でした」
+    </p>
+    <p style="font-size:14px; margin-bottom: 16px;">
+      <strong>こう伝える</strong>：「言葉で考える力や、目で見て考える力は、平均的なくらいに発揮できる結果でした。
+      ただ、頭の中で複数の情報を同時に覚えながら作業することは、相対的に負担が大きいようです。
+      これは、職場で『指示が頭に残らない』『途中で何をしていたかわからなくなる』という困りごとと
+      つながっている可能性があります。だから一緒に、覚えなくていい仕組み（メモ、チェックリスト、リマインダー）を考えていきましょう」
+    </p>
+    <p style="font-size:14px;">
+      数字より「日常で起きていること」と「これからの工夫」をセットで伝える――
+      この順番が、本人にとって自己理解の解像度を上げる伝え方です。
+    </p>
+  </div>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.2rem; margin: 32px 0 12px;" class="reveal">「固定マインドセット」を生まない言い方</h3>
+  <p class="reveal">
+    「あなたは○○の力が低い」という言い方は、本人にとって「自分は変われない」というメッセージとして残ります。
+    現在のパフォーマンスは、訓練、環境、支援、健康状態によって変わり得ます。
+    検査の結果は、固定された才能や限界の表ではなく、
+    「今、こういう特徴が見られている」という現在の写真です。
+    伝える時には、必ず「これは今の状態」「これから変わりうる」というニュアンスを残してください。
+  </p>
+
+  <h3 style="font-family: 'Noto Serif JP', serif; font-size: 1.2rem; margin: 32px 0 12px;" class="reveal">第三者への共有について</h3>
+  <p class="reveal">
+    結果票やプロフィールを、家族、企業、医療機関と共有する時には、本人の明確な同意が必要です。
+    また、共有する範囲も「すべての情報」ではなく、「相手に伝える必要のある最小限の情報」が原則です。
+    たとえば企業に伝える時は、IQの数値ではなく、「視覚的な指示の方が伝わりやすい」「複数の指示を同時に出されると混乱しやすい」といった、
+    機能のことばで配慮の必要性を伝えるほうが、本人の利益にも、企業側の理解にもつながります。
+  </p>
+
+  <blockquote class="pull-quote reveal">
+    検査結果は、本人と支援者の間の<em>対話のための素材</em>であって、<br>
+    本人を分類するためのラベルではない。
+  </blockquote>
+</section>
+
+<!-- ========== 10 References ========== -->
+<section class="refs" id="refs">
+  <div class="refs-inner">
+    <div class="chapter-kicker" style="margin-bottom: 8px;">References & Sources</div>
+    <h3>参考文献と情報源</h3>
+    <ol>
+      <li>
+        日本版WAIS-IV刊行委員会（上野一彦, 石隈利紀, 大六一志, 松田修, 山中克夫）(2018).
+        『日本版WAIS-IV知能検査 実施・採点マニュアル／理論・解釈マニュアル』. 日本文化科学社.
+        <br><a href="https://www.nichibun.co.jp/seek/kensa/wais4.html" target="_blank" rel="noopener">https://www.nichibun.co.jp/seek/kensa/wais4.html</a>
+      </li>
+      <li>
+        Wechsler, D. (2008). <em>Wechsler Adult Intelligence Scale—Fourth Edition (WAIS–IV): Technical and Interpretive Manual</em>. San Antonio, TX: NCS Pearson.
+      </li>
+      <li>
+        Wilson, A. C. (2024). Cognitive Profile in Autism and ADHD: A Meta-Analysis of Performance on the WAIS-IV and WISC-V.
+        <em>Archives of Clinical Neuropsychology, 39</em>(4), 498–515.
+        <br><a href="https://doi.org/10.1093/arclin/acad073" target="_blank" rel="noopener">https://doi.org/10.1093/arclin/acad073</a>
+      </li>
+      <li>
+        Lichtenberger, E. O., & Kaufman, A. S. (2012). <em>Essentials of WAIS-IV Assessment</em> (2nd ed.). Hoboken, NJ: Wiley.
+        （邦訳：上野一彦監訳『エッセンシャルズ WAIS-IVによる心理アセスメント』日本文化科学社）
+      </li>
+      <li>
+        Flanagan, D. P., & Kaufman, A. S. (2009). <em>Essentials of WISC-IV Assessment</em> (2nd ed.). Hoboken, NJ: Wiley.
+        （プロフィール分析の体系的な手続きに関する基礎文献）
+      </li>
+      <li>
+        Glass, L. A., Ryan, J. J., & Charter, R. A. (2010). Discrepancy score reliabilities in the WAIS-IV Standardization Sample. 
+        <em>Journal of Psychoeducational Assessment, 28</em>(3), 201–208.
+        <br><a href="https://doi.org/10.1177/0734282909346710" target="_blank" rel="noopener">https://doi.org/10.1177/0734282909346710</a><br>
+        （WAIS-IV下位検査ディスクレパンシーの信頼性が .55–.88 にとどまり、臨床判断基準 .90 を満たさないという指摘の出典）
+      </li>
+      <li>
+        Canivez, G. L., Watkins, M. W., McGill, R. J., & Dombrowski, S. C. (2026). 
+        Construct Validity of the WAIS-5: Complementary Exploratory and Confirmatory Factor Analyses of the 20 Primary and Secondary Subtests. 
+        <em>Assessment</em>, OnlineFirst.
+        <br><a href="https://doi.org/10.1177/10731911251412219" target="_blank" rel="noopener">https://doi.org/10.1177/10731911251412219</a>
+        （Wechsler系検査の構造的妥当性に関する継続的批判研究の最新例）
+      </li>
+      <li>
+        Canivez, G. L., & Watkins, M. W. (2010). Investigation of the factor structure of the Wechsler Adult Intelligence Scale—Fourth Edition (WAIS-IV): Exploratory and higher order factor analyses. 
+        <em>Psychological Assessment, 22</em>(4), 827–836.
+        <br><a href="https://doi.org/10.1037/a0020429" target="_blank" rel="noopener">https://doi.org/10.1037/a0020429</a>
+      </li>
+      <li>
+        Gignac, G. E., & Watkins, M. W. (2013). Bifactor modeling and the estimation of model-based reliability in the WAIS-IV. 
+        <em>Multivariate Behavioral Research, 48</em>(5), 639–662.
+        <br><a href="https://doi.org/10.1080/00273171.2013.804398" target="_blank" rel="noopener">https://doi.org/10.1080/00273171.2013.804398</a>
+        （WAIS-IVのbifactor分析。4指標の独自分散の信頼性ωsを報告）
+      </li>
+      <li>
+        Weiss, L. G., Keith, T. Z., Zhu, J., & Chen, H. (2013). WAIS-IV and Clinical Validation of the Four- and Five-Factor Interpretative Approaches. 
+        <em>Journal of Psychoeducational Assessment, 31</em>(2), 94–113.
+        <br>（検査開発側からの構造的妥当性の擁護）
+      </li>
+      <li>
+        Murray, A. L., & Johnson, W. (2013). The limitations of model fit in comparing the bi-factor versus higher-order models of human cognitive ability structure. 
+        <em>Intelligence, 41</em>(5), 407–422.
+        <br>（bifactorモデルが当てはまりが良く出やすいというモデル選択上の指摘）
+      </li>
+      <li>
+        松田修 (2019). 日本版WAIS-IVテクニカルレポート#1：日本版WAIS-IV知能検査改訂のポイント. 日本文化科学社.
+        <br><a href="https://www.chibatc.co.jp/cgi/upload/file/144/WAIS4.pdf" target="_blank" rel="noopener">https://www.chibatc.co.jp/cgi/upload/file/144/WAIS4.pdf</a>
+      </li>
+      <li>
+        山中克夫 (2023). 日本版WAIS-IV—検査能と検査者能という観点から. <em>老年臨床心理学研究, 4</em>, 36–45.
+        <br><a href="https://www.jstage.jst.go.jp/article/jjcgp/4/0/4_36/_article/-char/ja/" target="_blank" rel="noopener">https://www.jstage.jst.go.jp/article/jjcgp/4/0/4_36/_article/-char/ja/</a>
+        （高齢者へのWAIS-IV使用上の留意点。検査者の力量に関する論考）
+      </li>
+      <li>
+        Spearman, C. (1904). "General intelligence," objectively determined and measured. <em>American Journal of Psychology, 15</em>(2), 201–292.
+        （g因子・二因子説の原典）
+      </li>
+      <li>
+        Cattell, R. B. (1963). Theory of fluid and crystallized intelligence: A critical experiment. <em>Journal of Educational Psychology, 54</em>(1), 1–22.
+        <br>Horn, J. L., & Cattell, R. B. (1966). Refinement and test of the theory of fluid and crystallized general intelligences. <em>Journal of Educational Psychology, 57</em>(5), 253–270.
+        （Gf-Gc 理論の原典）
+      </li>
+      <li>
+        Carroll, J. B. (1993). <em>Human Cognitive Abilities: A Survey of Factor-Analytic Studies</em>. Cambridge University Press.
+        （三層構造モデルの原典）
+      </li>
+      <li>
+        McGrew, K. S. (2009). CHC theory and the human cognitive abilities project: Standing on the shoulders of the giants of psychometric intelligence research. <em>Intelligence, 37</em>(1), 1–10.
+        <br><a href="https://doi.org/10.1016/j.intell.2008.08.004" target="_blank" rel="noopener">https://doi.org/10.1016/j.intell.2008.08.004</a>
+        （CHC理論の現代的整理）
+      </li>
+      <li>
+        Benson, N., Hulac, D. M., & Kranzler, J. H. (2010). Independent examination of the Wechsler Adult Intelligence Scale—Fourth Edition (WAIS-IV): What does the WAIS-IV measure? <em>Psychological Assessment, 22</em>(1), 121–130.
+        <br><a href="https://doi.org/10.1037/a0017767" target="_blank" rel="noopener">https://doi.org/10.1037/a0017767</a>
+        （WAIS-IVの5因子CHCモデルの実証研究）
+      </li>
+      <li>
+        Gardner, H. (1983/2011). <em>Frames of Mind: The Theory of Multiple Intelligences</em>. Basic Books.
+        （多重知能理論の原典）
+      </li>
+      <li>
+        Sternberg, R. J. (1985). <em>Beyond IQ: A Triarchic Theory of Human Intelligence</em>. Cambridge University Press.
+        （三頭理論・実用知の概念の原典）
+      </li>
+      <li>
+        Flynn, J. R. (1987). Massive IQ gains in 14 nations: What IQ tests really measure. <em>Psychological Bulletin, 101</em>(2), 171–191.
+        （フリン効果の原典の一つ）
+      </li>
+      <li>
+        日本心理学会・日本臨床心理士会 (2014). 心理検査使用に関する倫理綱領／心理職の倫理綱領.
+        （結果共有・本人へのフィードバックに関する倫理規定の根拠）
+      </li>
+      <li>
+        辻井正次 ほか (2020-2021). 「療育手帳の交付判定及び知的障害に関する専門的な支援等に資する知的能力・適応行動の評価手法の研究」（厚生労働科学研究費補助金）.
+        <br><a href="https://mhlw-grants.niph.go.jp/system/files/download_pdf/2024/202417028A.pdf" target="_blank" rel="noopener">https://mhlw-grants.niph.go.jp/system/files/download_pdf/2024/202417028A.pdf</a>
+        （療育手帳判定基準の全国統一化に向けた研究）
+      </li>
+      <li>
+        厚生労働省 (2024). 「障害者雇用率制度について」「令和7年 障害者雇用状況の集計結果」.
+        （2024年4月から法定雇用率2.5%、2026年7月から2.7%へ。対象事業主規模も40人以上→37.5人以上に拡大）
+      </li>
+      <li>
+        加藤伸司, 下垣光, 小野寺敦志, 植田宏樹, 老川賢三, 池田一彦, 小坂敦二, 今井幸充, 長谷川和夫 (1991). 改訂長谷川式簡易知能評価スケール (HDS-R) の作成. 老年精神医学雑誌, 2(11), 1339-1347.
+        （HDS-R の原典）
+      </li>
+      <li>
+        Folstein, M. F., Folstein, S. E., & McHugh, P. R. (1975). "Mini-Mental State": A practical method for grading the cognitive state of patients for the clinician. <em>Journal of Psychiatric Research, 12</em>(3), 189–198.
+        （MMSE の原典）
+      </li>
+      <li>
+        日本老年医学会 (2024). 認知機能の評価法と認知症の診断.
+        <br><a href="https://www.jpn-geriat-soc.or.jp/tool/tool_02.html" target="_blank" rel="noopener">https://www.jpn-geriat-soc.or.jp/tool/tool_02.html</a>
+        （HDS-R 20点以下で感度93%・特異度86%、MMSE 23点以下で認知症疑い等の参照）
+      </li>
+      <li>
+        Sparrow, S. S., Cicchetti, D. V., & Balla, D. A. (2005). <em>Vineland Adaptive Behavior Scales, Second Edition (Vineland-II)</em>. Pearson.
+        <br>日本版：辻井正次, 村上隆 監修 (2014). 『日本版 Vineland-II 適応行動尺度』. 日本文化科学社.
+        <br>（療育手帳判定や知的能力障害の評価で広く用いられる適応行動評価ツールの標準）
+      </li>
+      <li>
+        独立行政法人 労働政策研究・研修機構 (JILPT). VPI職業興味検査／GATB 厚生労働省編一般職業適性検査.
+        <br><a href="https://www.jil.go.jp/institute/seika/tools/VPI.html" target="_blank" rel="noopener">https://www.jil.go.jp/institute/seika/tools/VPI.html</a><br>
+        <a href="https://www.jil.go.jp/institute/seika/tools/GATB.html" target="_blank" rel="noopener">https://www.jil.go.jp/institute/seika/tools/GATB.html</a>
+        （就労移行で活用される職業評価ツール）
+      </li>
+      <li>
+        大六一志, 山中克夫, 前川久男, 藤田和弘 (2011). 日本版 WAIS-III における新しい群指数 — 一般知的能力指標 (GAI) と認知熟達度指標 (CPI) の作成.
+        <br><a href="https://www.jstage.jst.go.jp/article/pacjpa/75/0/75_3EV015/_pdf" target="_blank" rel="noopener">https://www.jstage.jst.go.jp/article/pacjpa/75/0/75_3EV015/_pdf</a>
+        （GAI・CPI の日本版作成の経緯。WAIS-IV刊行委員と同じ研究チーム）
+      </li>
+    </ol>
+    <p style="font-size:12px; margin-top: 32px; color: var(--ink-mute); max-width: none;">
+      ※ 本資料の信頼区間および分類カテゴリーの値は、日本版WAIS-IV理論・解釈マニュアル（Wechsler, 2018b）の記載に基づいています。
+      ケース例の数値は説明のための仮想的な例であり、実在する個人のデータではありません。
+      WAIS-IVの実施・採点・解釈は、所定の研修を修了した心理職（公認心理師・臨床心理士など）の業務範囲です。
+      本資料は支援スタッフがアセスメント結果を読み解く際の参考用であり、検査の実施手引きではありません。
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="name">岡村雄一郎</div>
+  <div>就労移行支援スタッフ向け教育資料</div>
+</footer>
+
+<script>
+  // ===== Scroll progress =====
+  const progressFill = document.getElementById('progressFill');
+  function updateProgress() {
+    const scrolled = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? (scrolled / max) * 100 : 0;
+    progressFill.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ===== Reveal on scroll =====
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach((el) => io.observe(el));
+</script>
+
+</body>
+</html>
